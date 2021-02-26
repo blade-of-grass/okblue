@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class UUID {
   int _upper, _lower;
 
@@ -21,7 +23,18 @@ class UUID {
 
 class UserInfo {}
 
-class Message {}
+class Message {
+  // messageType is used to determine sender/reciever (to properly display message layout)
+  String messageText, messageType, time;
+  UserInfo user;
+
+  Message({
+    @required this.user,
+    @required this.messageType,
+    @required this.time,
+    @required this.messageText,
+  });
+}
 
 class NetworkState {
   // Map<>
