@@ -31,16 +31,10 @@ class _ScanPageState extends State<ScanPage> {
             SizedBox(
               height: 180,
             ),
-            Container(
-              width: double.infinity,
-              child: Text(
-                "Scanning...",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 30),
-              ),
-            ),
-            SizedBox(
-              height: 30,
+            Text(
+              "Scanning...",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 30),
             ),
           ],
         ),
