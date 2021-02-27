@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 
 class ScanPage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => ScanPageState();
+  State<StatefulWidget> createState() => _ScanPageState();
 }
 
-class ScanPageState extends State<ScanPage> {
+class _ScanPageState extends State<ScanPage> {
   // Need to add methods when detect connections
 
   @override
