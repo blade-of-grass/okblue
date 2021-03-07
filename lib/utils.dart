@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'dart:math';
 
 class UUID {
   int _upper, _lower;
@@ -21,7 +22,39 @@ class UUID {
       this._lower == other._lower;
 }
 
-class UserInfo {}
+class UserInfo {
+  final String name;
+  String onlineStatus = "Online";
+  UUID userId;
+  static final List<Color> colorPalette = [
+    Colors.blue[100],
+    Colors.blue[50],
+    Colors.blue[200],
+    Colors.amber[50],
+    Colors.amber[100],
+    Colors.amber[200],
+    Colors.pink[50],
+    Colors.pink[100],
+    Colors.pink[200],
+    Colors.green[50],
+    Colors.green[100],
+    Colors.green[200],
+    Colors.red[50],
+    Colors.red[100],
+    Colors.red[200]
+  ];
+  Color color;
+
+  UserInfo({
+    @required this.name,
+    @required this.onlineStatus,
+    @required this.userId,
+  }) {
+    Random random = new Random();
+    int index = random.nextInt(colorPalette.length);
+    this.color = colorPalette[index];
+  }
+}
 
 class Message {
   // messageType is used to determine sender/reciever (to properly display message layout)
