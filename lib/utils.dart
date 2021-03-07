@@ -20,6 +20,17 @@ class UUID {
       other is UUID &&
       this._upper == other._upper &&
       this._lower == other._lower;
+
+  @override
+  int get hashCode {
+    return 0;
+  }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return "$_lower$_upper";
+  }
 }
 
 class UserInfo {
@@ -58,8 +69,9 @@ class UserInfo {
 
 class Message {
   // messageType is used to determine sender/reciever (to properly display message layout)
-  String messageText, messageType, time;
-  UserInfo user;
+  final String messageText, messageType;
+  final DateTime time;
+  final UserInfo user;
 
   Message({
     @required this.user,
@@ -70,5 +82,23 @@ class Message {
 }
 
 class NetworkState {
-  // Map<>
+  var _state = Map<UserInfo, List<UserInfo>>();
+
+  void makeConnection(UserInfo a, UserInfo b) {
+    _state[a].add(b);
+    _state[b].add(a);
+  }
+
+  String serialize() {
+    String value = "";
+    for (final user in _state.keys) {
+      value += "user.id";
+      for (final connection in _state[user]) {
+        value += "connection.id" + "-";
+      }
+      value += ",";
+    }
+
+    return value;
+  }
 }
