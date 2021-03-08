@@ -41,11 +41,9 @@ class _MessagePageState extends State<MessagePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  // May want to add multi line visibility for this textfield
-                  // Currently it will just keep scrolling to the right if # words > line space
                   child: TextField(
-                    maxLines: 5,
                     minLines: 1,
+                    maxLines: 5,
                     style: TextStyle(
                       color: Colors.white,
                     ),
@@ -61,15 +59,15 @@ class _MessagePageState extends State<MessagePage> {
                   alignment: Alignment.topRight,
                   child: ClipOval(
                     child: Material(
-                      color: Colors.indigo, // button color
+                      color: Colors.indigo,
                       child: InkWell(
                         highlightColor: Colors.transparent,
-                        splashColor: Colors.blue, // inkwell color
+                        splashColor: Colors.blue,
                         child: Padding(
-                          padding: EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(12.0),
                           child: Icon(
                             Icons.send,
-                            size: 16.0,
+                            size: 24.0,
                             color: Colors.white,
                           ),
                         ),
