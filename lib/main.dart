@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:okbluemer/message_page.dart';
+import './scan_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -45,17 +46,8 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.red[300],
-                shape: BoxShape.circle,
-              ),
-              width: 180,
-              height: 180,
-            ),
-            SizedBox(
-              height: 180,
-            ),
+            Image.asset("assets/images/icon.png"),
+            SizedBox(height: 120),
             TextField(
               onChanged: (inputedUserName) {
                 userName = inputedUserName;
