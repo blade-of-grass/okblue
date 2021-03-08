@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:okbluemer/message_page.dart';
+import './scan_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,15 +15,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MessagePage(),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  MyHomePage({Key key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -45,17 +43,8 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.red[300],
-                shape: BoxShape.circle,
-              ),
-              width: 180,
-              height: 180,
-            ),
-            SizedBox(
-              height: 180,
-            ),
+            Image.asset("assets/images/icon.png"),
+            SizedBox(height: 120),
             TextField(
               onChanged: (inputedUserName) {
                 userName = inputedUserName;
