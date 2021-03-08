@@ -19,18 +19,9 @@ class _ScanPageState extends State<ScanPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.red[300],
-                shape: BoxShape.circle,
-              ),
-              width: 180,
-              height: 180,
-            ),
-            SizedBox(
-              height: 180,
-            ),
+          children: [
+            Image.asset("assets/images/icon.png"),
+            SizedBox(height: 120),
             Text(
               "Scanning...",
               textAlign: TextAlign.center,

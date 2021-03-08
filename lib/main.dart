@@ -44,18 +44,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.red[300],
-                shape: BoxShape.circle,
-              ),
-              width: 180,
-              height: 180,
-            ),
-            SizedBox(
-              height: 180,
-            ),
+          children: [
+            Image.asset("assets/images/icon.png"),
+            SizedBox(height: 120),
             TextField(
               onChanged: (inputedUserName) {
                 userName = inputedUserName;
