@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 // Using layout of homepage
 
 class ScanPage extends StatefulWidget {
+  final String username;
+  ScanPage(this.username);
+
   @override
   State<StatefulWidget> createState() => _ScanPageState();
 }

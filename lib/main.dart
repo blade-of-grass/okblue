@@ -29,8 +29,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String userName;
+
   void _onClickContinue() {
-    print(userName);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ScanPage(userName)),
+    );
   }
 
   @override
@@ -52,11 +56,22 @@ class _MyHomePageState extends State<MyHomePage> {
               decoration: InputDecoration(hintText: "User Name"),
             ),
             SizedBox(
-              height: 30,
+              height: 16,
             ),
             RaisedButton(
               onPressed: _onClickContinue,
-              child: Text("Continue"),
+              child: Text(
+                "Continue",
+                style: TextStyle(
+                  color: Colors.cyan[400],
+                ),
+              ),
+              splashColor: Colors.white,
+              highlightColor: Colors.transparent,
+              color: Colors.white.withAlpha(220),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(32.0),
+              ),
             ),
           ],
         ),
