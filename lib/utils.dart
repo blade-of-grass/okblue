@@ -38,20 +38,25 @@ class UserInfo {
   String onlineStatus = "Online";
   UUID userId;
   static final List<Color> colorPalette = [
-    Colors.blue[100],
     Colors.blue[50],
     Colors.blue[200],
     Colors.amber[50],
-    Colors.amber[100],
     Colors.amber[200],
     Colors.pink[50],
-    Colors.pink[100],
     Colors.pink[200],
     Colors.green[50],
-    Colors.green[100],
     Colors.green[200],
+    Colors.indigo[50],
+    Colors.indigo[200],
+    Colors.cyan[50],
+    Colors.cyan[200],
+    Colors.teal[50],
+    Colors.teal[200],
+    Colors.lime[50],
+    Colors.lime[200],
+    Colors.deepOrange[200],
+    Colors.deepOrange[50],
     Colors.red[50],
-    Colors.red[100],
     Colors.red[200]
   ];
   Color color;
@@ -67,15 +72,18 @@ class UserInfo {
   }
 }
 
-class Message {
-  // messageType is used to determine sender/reciever (to properly display message layout)
-  final String messageText, messageType;
-  final DateTime time;
+class MessageBlock {
+  final List<Message> messages;
   final UserInfo user;
 
+  MessageBlock({@required this.messages, @required this.user});
+}
+
+class Message {
+  final String messageText;
+  final DateTime time;
+
   Message({
-    @required this.user,
-    @required this.messageType,
     @required this.time,
     @required this.messageText,
   });
@@ -101,4 +109,21 @@ class NetworkState {
 
     return value;
   }
+}
+
+String getFormattedTime(DateTime time) {
+  String zeroPadding = "";
+  if (time.minute < 10) {
+    zeroPadding = "0";
+  }
+
+  int hour = time.hour;
+  if (hour > 12) {
+    hour -= 12;
+  }
+  if (hour == 0) {
+    hour = 12;
+  }
+
+  return "$hour:$zeroPadding${time.minute}";
 }

@@ -1,57 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:okbluemer/utils.dart';
 
-// This might not need to be a statefulwidget and maybe just a stateless widget...
-class MessageBox extends StatefulWidget {
-  final List<Message> messages;
-  final UserInfo user;
+class MessageBox extends StatelessWidget {
+  final MessageBlock messageBlock;
+  final CrossAxisAlignment alignment;
 
-  MessageBox(
-    this.user,
-    this.messages,
-  );
+  MessageBox({
+    @required this.messageBlock,
+    @required this.alignment,
+  });
 
-  @override
-  _MessageBoxState createState() {
-    return _MessageBoxState();
-  }
-}
-
-class _MessageBoxState extends State<MessageBox> {
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        // TODO: Need to look into expanding dynamically based on List<Message>
-        // look into "..." seems like a expander operator/function
+    final List<Widget> cards = this
+        .messageBlock
+        .messages
+        .map(makeCardFromMessage)
+        .toList(growable: false);
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8.0),
+      child: Column(
+        crossAxisAlignment: alignment,
         children: [
-          Card(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.black, width: 0.5),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            color: Colors.blue,     //widget.user[0].color
-            margin: EdgeInsets.fromLTRB(100, 100, 0, 0),
-            child: Padding(
-              padding: EdgeInsets.all(10),
-              child: Text("message..."), //widget.messages[0].messageText
-            ),
+          ...cards,
+          Text(
+            this.messageBlock.user.name,
+            style: TextStyle(color: Colors.white),
           ),
-          Card(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.black, width: 0.5),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            color: Colors.blue,
-            margin: EdgeInsets.fromLTRB(100, 0, 0, 0),
-            child: Padding(
-              padding: EdgeInsets.all(10),
-              child: Text("Second message is a bit longer..."),
-            ),
-          ),
-          Text("name....time"),
         ],
       ),
     );
+  }
+
+  Widget makeCardFromMessage(Message message) {
+    return Container(
+        constraints: BoxConstraints.loose(Size(300, double.infinity)),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: Colors.black, width: 0.5),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          color: this.messageBlock.user.color,
+          margin: EdgeInsets.fromLTRB(0, 4, 0, 0),
+          child: Padding(
+            padding: EdgeInsets.only(top: 8, right: 8, left: 8, bottom: 4),
+            child: Column(
+              crossAxisAlignment: alignment,
+              children: [
+                Text(message.messageText),
+                SizedBox(height: 4),
+                Text(
+                  getFormattedTime(message.time),
+                  style: TextStyle(fontSize: 11),
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 }

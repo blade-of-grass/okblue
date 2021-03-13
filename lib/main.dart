@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:okbluemer/message_page.dart';
+import 'package:okbluemer/utils.dart';
 import './scan_page.dart';
 
 void main() {
@@ -15,7 +17,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(),
+      home: MessagePage(
+        user: UserInfo(
+          name: "me",
+          userId: UUID(),
+          onlineStatus: "online",
+        ),
+      ),
     );
   }
 }
