@@ -23,9 +23,12 @@ class MessageBox extends StatelessWidget {
         crossAxisAlignment: alignment,
         children: [
           ...cards,
-          Text(
-            this.messageBlock.user.name,
-            style: TextStyle(color: Colors.white),
+          Padding(
+            padding: EdgeInsets.only(right: 8, left: 8),
+            child: Text(
+              this.messageBlock.user.name,
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -37,11 +40,10 @@ class MessageBox extends StatelessWidget {
         constraints: BoxConstraints.loose(Size(300, double.infinity)),
         child: Card(
           shape: RoundedRectangleBorder(
-            side: BorderSide(color: Colors.black, width: 0.5),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
           ),
           color: this.messageBlock.user.color,
-          margin: EdgeInsets.fromLTRB(0, 4, 0, 0),
+          margin: EdgeInsets.fromLTRB(4, 1, 4, 0),
           child: Padding(
             padding: EdgeInsets.only(top: 8, right: 8, left: 8, bottom: 4),
             child: Column(
@@ -51,7 +53,7 @@ class MessageBox extends StatelessWidget {
                 SizedBox(height: 4),
                 Text(
                   getFormattedTime(message.time),
-                  style: TextStyle(fontSize: 11),
+                  style: TextStyle(fontSize: 11, color: Colors.black38),
                 ),
               ],
             ),
