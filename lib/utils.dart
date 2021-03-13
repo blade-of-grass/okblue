@@ -103,7 +103,7 @@ class UserInfo {
   static String generateUsername() {
     String begin = getRandomItemFromArray(UserInfo.adjectives);
     String end = getRandomItemFromArray(UserInfo.nouns);
-    return begin + end;
+    return "$begin $end";
   }
 }
 
