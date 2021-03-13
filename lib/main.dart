@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:okbluemer/message_page.dart';
 import 'package:okbluemer/utils.dart';
 import './scan_page.dart';
 
@@ -17,13 +16,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MessagePage(
-        user: UserInfo(
-          name: "me",
-          userId: UUID(),
-          onlineStatus: "online",
-        ),
-      ),
+      home: MyHomePage(),
     );
   }
 }
@@ -37,6 +30,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String userName;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    userName = UserInfo.generateUsername();
+  }
 
   void _onClickContinue() {
     Navigator.push(
@@ -61,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onChanged: (inputedUserName) {
                 userName = inputedUserName;
               },
+              controller: TextEditingController(text: userName),
               decoration: InputDecoration(hintText: "User Name"),
             ),
             SizedBox(

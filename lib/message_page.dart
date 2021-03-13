@@ -12,15 +12,21 @@ class MessagePage extends StatefulWidget {
 }
 
 class _MessagePageState extends State<MessagePage> {
-  @override
-  Widget build(BuildContext context) {
-    final List<UserInfo> users = [
-      UserInfo(name: "nuha", onlineStatus: "online", userId: UUID()),
-      UserInfo(name: "anthony", onlineStatus: "online", userId: UUID()),
-      UserInfo(name: "mark", onlineStatus: "online", userId: UUID()),
-    ];
+  TextEditingController messageController = TextEditingController();
 
-    final List<MessageBlock> messages = [
+  final List<UserInfo> users = [
+    UserInfo(name: "nuha", userId: UUID()),
+    UserInfo(name: "anthony", userId: UUID()),
+    UserInfo(name: "mark", userId: UUID()),
+  ];
+
+  final List<MessageBlock> messages = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    this.messages.addAll([
       MessageBlock(
         messages: [
           Message(messageText: "hello there", time: DateTime.now()),
@@ -67,8 +73,11 @@ class _MessagePageState extends State<MessagePage> {
         ],
         user: users[0],
       ),
-    ];
+    ]);
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[900],
       body: Column(
@@ -76,7 +85,7 @@ class _MessagePageState extends State<MessagePage> {
           Expanded(
             child: ListView.builder(
               physics: BouncingScrollPhysics(),
-              itemCount: 5,
+              itemCount: this.messages.length,
               itemBuilder: (BuildContext context, int index) {
                 final user = messages[index].user;
                 CrossAxisAlignment alignment;
@@ -113,6 +122,7 @@ class _MessagePageState extends State<MessagePage> {
               children: [
                 Expanded(
                   child: TextField(
+                    controller: this.messageController,
                     minLines: 1,
                     maxLines: 5,
                     style: TextStyle(
@@ -142,7 +152,7 @@ class _MessagePageState extends State<MessagePage> {
                             color: Colors.white,
                           ),
                         ),
-                        onTap: () {},
+                        onTap: onClickSendMessage,
                       ),
                     ),
                   ),
@@ -153,5 +163,31 @@ class _MessagePageState extends State<MessagePage> {
         ],
       ),
     );
+  }
+
+  void addMessage(Message message, UserInfo user) {
+    setState(() {
+      final lastBlock = this.messages.last;
+      // TODO: switch this to user id
+      if (lastBlock.user == user) {
+        lastBlock.messages.add(message);
+      } else {
+        this
+            .messages
+            .add(MessageBlock.withMessage(message: message, user: user));
+      }
+    });
+  }
+
+  void onClickSendMessage() {
+    final message = Message(
+      messageText: this.messageController.text,
+      time: DateTime.now(),
+    );
+
+    final user = this.widget.user;
+
+    this.addMessage(message, user);
+    this.messageController.text = "";
   }
 }

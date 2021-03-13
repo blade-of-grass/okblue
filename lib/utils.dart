@@ -35,7 +35,7 @@ class UUID {
 
 class UserInfo {
   final String name;
-  String onlineStatus = "Online";
+  bool isOnline = true;
   UUID userId;
   static final List<Color> colorPalette = [
     Colors.blue[50],
@@ -59,16 +59,51 @@ class UserInfo {
     Colors.red[50],
     Colors.red[200]
   ];
+
+  static final List<String> adjectives = [
+    "Happy",
+    "Sad",
+    "Angry",
+    "Indignant",
+    "Annoyed",
+    "Blue",
+    "Charming",
+    "Clumsy",
+    "Funny",
+    "Cute",
+    "Confused",
+    "Defiant",
+    "Bubbly",
+  ];
+  static final List<String> nouns = [
+    "Capybara",
+    "Rhino",
+    "Panda",
+    "Kangaroo",
+    "Platypus",
+    "Puppy",
+    "Kitten",
+    "Spider",
+    "Penguin",
+    "Owl",
+    "Bear",
+    "Frog",
+    "Axolotl",
+  ];
   Color color;
 
   UserInfo({
     @required this.name,
-    @required this.onlineStatus,
     @required this.userId,
+    this.isOnline,
   }) {
-    Random random = new Random();
-    int index = random.nextInt(colorPalette.length);
-    this.color = colorPalette[index];
+    this.color = getRandomItemFromArray(colorPalette);
+  }
+
+  static String generateUsername() {
+    String begin = getRandomItemFromArray(UserInfo.adjectives);
+    String end = getRandomItemFromArray(UserInfo.nouns);
+    return begin + end;
   }
 }
 
@@ -77,6 +112,11 @@ class MessageBlock {
   final UserInfo user;
 
   MessageBlock({@required this.messages, @required this.user});
+
+  MessageBlock.withMessage({@required Message message, @required this.user})
+      : messages = [] {
+    messages.add(message);
+  }
 }
 
 class Message {
@@ -126,4 +166,9 @@ String getFormattedTime(DateTime time) {
   }
 
   return "$hour:$zeroPadding${time.minute}";
+}
+
+final Random _random = new Random();
+T getRandomItemFromArray<T>(List<T> items) {
+  return items[_random.nextInt(items.length)];
 }
