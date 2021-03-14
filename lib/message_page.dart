@@ -15,9 +15,9 @@ class _MessagePageState extends State<MessagePage> {
   TextEditingController messageController = TextEditingController();
 
   final List<UserInfo> users = [
-    UserInfo(name: "nuha", userId: UUID()),
-    UserInfo(name: "anthony", userId: UUID()),
-    UserInfo(name: "mark", userId: UUID()),
+    UserInfo(name: "nuha", userId: UUID(), isOnline: true),
+    UserInfo(name: "anthony", userId: UUID(), isOnline: false),
+    UserInfo(name: "mark", userId: UUID(), isOnline: false),
   ];
 
   final List<MessageBlock> messages = [];

@@ -26,6 +26,7 @@ class _ScanPageState extends State<ScanPage> {
                 user: UserInfo(
                   name: this.widget.username,
                   userId: UUID(),
+                  isOnline: true,
                 ),
               )),
     );

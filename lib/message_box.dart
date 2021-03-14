@@ -25,9 +25,22 @@ class MessageBox extends StatelessWidget {
           ...cards,
           Padding(
             padding: EdgeInsets.only(right: 8, left: 8),
-            child: Text(
-              this.messageBlock.user.name,
-              style: TextStyle(color: Colors.white),
+            child: Row(
+              mainAxisAlignment: (alignment == CrossAxisAlignment.end ? MainAxisAlignment.end : MainAxisAlignment.start),
+              children: <Widget>[   
+                Icon(
+                    Icons.circle,
+                    color: (this.messageBlock.user.isOnline ? Colors.green : Colors.grey),
+                    size: 8,
+                  ),
+                SizedBox(
+                  width: 2,
+                ),
+                Text(
+                  this.messageBlock.user.name,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
             ),
           ),
         ],
