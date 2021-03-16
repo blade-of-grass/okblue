@@ -13,6 +13,7 @@ class MessagePage extends StatefulWidget {
 
 class _MessagePageState extends State<MessagePage> {
   TextEditingController messageController = TextEditingController();
+  ScrollController scrollController = ScrollController();
 
   final List<UserInfo> users = [
     UserInfo(name: "nuha", userId: UUID(), isOnline: true),
@@ -84,10 +85,13 @@ class _MessagePageState extends State<MessagePage> {
         children: [
           Expanded(
             child: ListView.builder(
+              reverse: true,
+              controller: scrollController,
               physics: BouncingScrollPhysics(),
               itemCount: this.messages.length,
               itemBuilder: (BuildContext context, int index) {
-                final user = messages[index].user;
+                //final user = messages[index].user;
+                final user = messages[messages.length - 1 - index].user;
                 CrossAxisAlignment alignment;
                 if (user.name == this.widget.user.name) {
                   alignment = CrossAxisAlignment.end;
@@ -96,7 +100,8 @@ class _MessagePageState extends State<MessagePage> {
                 }
 
                 return MessageBox(
-                  messageBlock: messages[index],
+                  //messageBlock: messages[index],
+                  messageBlock: messages[messages.length - 1 - index],
                   alignment: alignment,
                 );
                 // var r = Random();
@@ -189,5 +194,16 @@ class _MessagePageState extends State<MessagePage> {
 
     this.addMessage(message, user);
     this.messageController.text = "";
+
+    // scroll to the end when scrolled too far up (backup)
+    scrollController.jumpTo(0);
+  
+    //scrollController.jumpTo(scrollController.position.maxScrollExtent);
+
+    // scrollController.animateTo(
+    //   scrollController.position.maxScrollExtent,
+    //   duration: Duration(milliseconds: 250),
+    //   curve: Curves.fastOutSlowIn,
+    // );
   }
 }
