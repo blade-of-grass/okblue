@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'package:okbluemer/customizations.dart';
+
 class UUID {
   int _upper, _lower;
 
@@ -35,47 +37,50 @@ class UUID {
 
 class UserInfo {
   final String name;
-  String onlineStatus = "Online";
-  UUID userId;
-  static final List<Color> colorPalette = [
-    Colors.blue[100],
-    Colors.blue[50],
-    Colors.blue[200],
-    Colors.amber[50],
-    Colors.amber[100],
-    Colors.amber[200],
-    Colors.pink[50],
-    Colors.pink[100],
-    Colors.pink[200],
-    Colors.green[50],
-    Colors.green[100],
-    Colors.green[200],
-    Colors.red[50],
-    Colors.red[100],
-    Colors.red[200]
-  ];
-  Color color;
+  final UUID userId;
+  final Color color;
+  bool isOnline;
 
   UserInfo({
-    @required this.name,
-    @required this.onlineStatus,
+    @required String name,
     @required this.userId,
-  }) {
-    Random random = new Random();
-    int index = random.nextInt(colorPalette.length);
-    this.color = colorPalette[index];
+    this.isOnline = true,
+  }) : color = getRandomColor(), name = validateName(name);
+
+  static String generateUsername() {
+    return getRandomName();
+  }
+
+  static String validateName(String submittedName) {
+    if (submittedName == null || submittedName.isEmpty) {
+      return generateUsername();
+    } else {
+      return submittedName;
+    }
   }
 }
 
-class Message {
-  // messageType is used to determine sender/reciever (to properly display message layout)
-  final String messageText, messageType;
-  final DateTime time;
+/// a class representing a "block" of messages sent by a single user
+class MessageBlock {
+  final List<Message> messages;
   final UserInfo user;
 
+  /// construct a MessageBlock from a list of messages and their associated user
+  MessageBlock({@required this.messages, @required this.user});
+
+  /// construct a MessageBlock with a single message and it's associated user
+  MessageBlock.withMessage({@required Message message, @required this.user})
+      : messages = [] {
+    messages.add(message);
+  }
+}
+
+/// a class representing a single message, contains message text and time sent
+class Message {
+  final String messageText;
+  final DateTime time;
+
   Message({
-    @required this.user,
-    @required this.messageType,
     @required this.time,
     @required this.messageText,
   });
@@ -101,4 +106,21 @@ class NetworkState {
 
     return value;
   }
+}
+
+String getFormattedTime(DateTime time) {
+  String zeroPadding = "";
+  if (time.minute < 10) {
+    zeroPadding = "0";
+  }
+
+  int hour = time.hour;
+  if (hour > 12) {
+    hour -= 12;
+  }
+  if (hour == 0) {
+    hour = 12;
+  }
+
+  return "$hour:$zeroPadding${time.minute}";
 }

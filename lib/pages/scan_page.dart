@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_blue/flutter_blue.dart';
-
-// Using layout of homepage
+import 'package:okbluemer/pages/message_page.dart';
+import 'package:okbluemer/utils.dart';
 
 class ScanPage extends StatefulWidget {
   final String username;
@@ -35,12 +34,22 @@ class _ScanPageState extends State<ScanPage> {
 
     // // Stop scanning
     // flutterBlue.stopScan();
+    
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => MessagePage(
+                user: UserInfo(
+                  name: this.widget.username,
+                  userId: UUID()
+                ),
+              ),),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.cyan[400],
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 100),
         child: Column(
