@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:okbluemer/message_box.dart';
+import 'package:okbluemer/filler_test_data.dart';
 import 'package:okbluemer/utils.dart';
+import 'package:okbluemer/widgets/message_box.dart';
 
 class MessagePage extends StatefulWidget {
   final UserInfo user;
@@ -15,72 +16,18 @@ class _MessagePageState extends State<MessagePage> {
   TextEditingController messageController = TextEditingController();
   ScrollController scrollController = ScrollController();
 
-  final List<UserInfo> users = [
-    UserInfo(name: "nuha", userId: UUID(), isOnline: true),
-    UserInfo(name: "anthony", userId: UUID(), isOnline: false),
-    UserInfo(name: "mark", userId: UUID(), isOnline: false),
-  ];
-
   final List<MessageBlock> messages = [];
 
   @override
   void initState() {
     super.initState();
 
-    this.messages.addAll([
-      MessageBlock(
-        messages: [
-          Message(messageText: "hello there", time: DateTime.now()),
-          Message(messageText: "is anyone out there", time: DateTime.now()),
-          Message(messageText: "goodbye then", time: DateTime.now()),
-        ],
-        user: users[1],
-      ),
-      MessageBlock(
-        messages: [
-          Message(messageText: "I'm here", time: DateTime.now()),
-        ],
-        user: users[0],
-      ),
-      MessageBlock(
-        messages: [
-          Message(messageText: "me too", time: DateTime.now()),
-          Message(
-              messageText: "do you all want to get some food?",
-              time: DateTime.now()),
-        ],
-        user: users[2],
-      ),
-      MessageBlock(
-        messages: [
-          Message(messageText: "I'm not sure", time: DateTime.now()),
-          Message(
-              messageText:
-                  "I'm now going to type a very long message to test how the message box reacts to receiving a very long string that is above and beyond the normal expected length for a message to be received I'm rambling now but that's ok I'm just trying to generate text or as much text as possible",
-              time: DateTime.now()),
-        ],
-        user: this.widget.user,
-      ),
-      MessageBlock(
-        messages: [
-          Message(
-              messageText: "ok that's weird I'm leaving", time: DateTime.now()),
-        ],
-        user: users[0],
-      ),
-      MessageBlock(
-        messages: [
-          Message(messageText: "goodbye", time: DateTime.now()),
-        ],
-        user: users[0],
-      ),
-    ]);
+    getFillerTestMessages(this.widget.user, addMessage);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900],
       body: Column(
         children: [
           Expanded(
@@ -91,7 +38,8 @@ class _MessagePageState extends State<MessagePage> {
               itemCount: this.messages.length,
               itemBuilder: (BuildContext context, int index) {
                 //final user = messages[index].user;
-                final user = messages[messages.length - 1 - index].user;
+                final messageBlock = messages[messages.length - 1 - index];
+                final user = messageBlock.user;
                 CrossAxisAlignment alignment;
                 if (user.name == this.widget.user.name) {
                   alignment = CrossAxisAlignment.end;
@@ -100,22 +48,9 @@ class _MessagePageState extends State<MessagePage> {
                 }
 
                 return MessageBox(
-                  //messageBlock: messages[index],
-                  messageBlock: messages[messages.length - 1 - index],
+                  messageBlock: messageBlock,
                   alignment: alignment,
                 );
-                // var r = Random();
-                // return Container(
-                //   height: (r.nextInt(10) + 3) * 10.0,
-                //   child: Text(
-                //     "message",
-                //     style: TextStyle(color: Colors.white),
-                //   ),
-                //   decoration: BoxDecoration(
-                //     color: Colors.transparent,
-                //     border: Border.all(color: Colors.yellow),
-                //   ),
-                // );
               },
             ),
           ),
@@ -171,17 +106,15 @@ class _MessagePageState extends State<MessagePage> {
   }
 
   void addMessage(Message message, UserInfo user) {
-    setState(() {
+    if (this.messages.isNotEmpty) {
       final lastBlock = this.messages.last;
       // TODO: switch this to user id
       if (lastBlock.user == user) {
         lastBlock.messages.add(message);
-      } else {
-        this
-            .messages
-            .add(MessageBlock.withMessage(message: message, user: user));
+        return;
       }
-    });
+    }
+    this.messages.add(MessageBlock.withMessage(message: message, user: user));
   }
 
   void onClickSendMessage() {
@@ -192,7 +125,9 @@ class _MessagePageState extends State<MessagePage> {
 
     final user = this.widget.user;
 
-    this.addMessage(message, user);
+    setState(() {
+      this.addMessage(message, user);
+    });
     this.messageController.text = "";
 
     // scroll to the end when scrolled too far up (backup)

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'package:okbluemer/customizations.dart';
+
 class UUID {
   int _upper, _lower;
 
@@ -35,90 +37,45 @@ class UUID {
 
 class UserInfo {
   final String name;
-  bool isOnline = true;
-  UUID userId;
-  static final List<Color> colorPalette = [
-    Colors.blue[50],
-    Colors.blue[200],
-    Colors.amber[50],
-    Colors.amber[200],
-    Colors.pink[50],
-    Colors.pink[200],
-    Colors.green[50],
-    Colors.green[200],
-    Colors.indigo[50],
-    Colors.indigo[200],
-    Colors.cyan[50],
-    Colors.cyan[200],
-    Colors.teal[50],
-    Colors.teal[200],
-    Colors.lime[50],
-    Colors.lime[200],
-    Colors.deepOrange[200],
-    Colors.deepOrange[50],
-    Colors.red[50],
-    Colors.red[200]
-  ];
-
-  static final List<String> adjectives = [
-    "Happy",
-    "Sad",
-    "Angry",
-    "Indignant",
-    "Annoyed",
-    "Blue",
-    "Charming",
-    "Clumsy",
-    "Funny",
-    "Cute",
-    "Confused",
-    "Defiant",
-    "Bubbly",
-  ];
-  static final List<String> nouns = [
-    "Capybara",
-    "Rhino",
-    "Panda",
-    "Kangaroo",
-    "Platypus",
-    "Puppy",
-    "Kitten",
-    "Spider",
-    "Penguin",
-    "Owl",
-    "Bear",
-    "Frog",
-    "Axolotl",
-  ];
-  Color color;
+  final UUID userId;
+  final Color color;
+  bool isOnline;
 
   UserInfo({
-    @required this.name,
+    @required String name,
     @required this.userId,
-    this.isOnline,
-  }) {
-    this.color = getRandomItemFromArray(colorPalette);
-  }
+    this.isOnline = true,
+  }) : color = getRandomColor(), name = validateName(name);
 
   static String generateUsername() {
-    String begin = getRandomItemFromArray(UserInfo.adjectives);
-    String end = getRandomItemFromArray(UserInfo.nouns);
-    return "$begin $end";
+    return getRandomName();
+  }
+
+  static String validateName(String submittedName) {
+    if (submittedName == null || submittedName.isEmpty) {
+      return generateUsername();
+    } else {
+      return submittedName;
+    }
   }
 }
 
+/// a class representing a "block" of messages sent by a single user
 class MessageBlock {
   final List<Message> messages;
   final UserInfo user;
 
+  /// construct a MessageBlock from a list of messages and their associated user
   MessageBlock({@required this.messages, @required this.user});
 
+  /// construct a MessageBlock with a single message and it's associated user
   MessageBlock.withMessage({@required Message message, @required this.user})
       : messages = [] {
     messages.add(message);
   }
 }
 
+/// a class representing a single message, contains message text and time sent
 class Message {
   final String messageText;
   final DateTime time;
@@ -166,9 +123,4 @@ String getFormattedTime(DateTime time) {
   }
 
   return "$hour:$zeroPadding${time.minute}";
-}
-
-final Random _random = new Random();
-T getRandomItemFromArray<T>(List<T> items) {
-  return items[_random.nextInt(items.length)];
 }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:okbluemer/message_page.dart';
+import 'package:okbluemer/pages/message_page.dart';
 import 'package:okbluemer/utils.dart';
-
-// Using layout of homepage
 
 class ScanPage extends StatefulWidget {
   final String username;
@@ -25,17 +23,15 @@ class _ScanPageState extends State<ScanPage> {
           builder: (context) => MessagePage(
                 user: UserInfo(
                   name: this.widget.username,
-                  userId: UUID(),
-                  isOnline: true,
+                  userId: UUID()
                 ),
-              )),
+              ),),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.cyan[400],
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 100),
         child: Column(
