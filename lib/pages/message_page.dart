@@ -22,7 +22,7 @@ class _MessagePageState extends State<MessagePage> {
   void initState() {
     super.initState();
 
-    getFillerTestMessages(this.widget.user, addMessage);
+    getFillerTestMessages(this.widget.user, addMessage, messages: 300, users: 20);
   }
 
   @override
@@ -118,8 +118,14 @@ class _MessagePageState extends State<MessagePage> {
   }
 
   void onClickSendMessage() {
+    // don't send null or empty messages
+    final trimmedMessage = this.messageController.text.trim();
+    if (trimmedMessage == null || trimmedMessage.isEmpty) {
+      return;
+    }
+
     final message = Message(
-      messageText: this.messageController.text,
+      messageText: trimmedMessage,
       time: DateTime.now(),
     );
 

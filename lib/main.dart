@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.indigo,
-        scaffoldBackgroundColor: HSLColor.fromColor(Colors.indigo).withSaturation(0.2).withLightness(0.3).toColor(),
+        scaffoldBackgroundColor: HSLColor.fromColor(Colors.indigo).withSaturation(0.2).withLightness(0.2).toColor(),
       ),
       home: HomePage(),
     );

@@ -10,7 +10,7 @@ import 'package:okbluemer/utils.dart';
 /// addMessage - a function that each message along with it's sender will get passed into
 /// messages - the number of messages to generate
 /// users - the number of users to generate
-getFillerTestMessages(UserInfo self, void addMessage(Message message, UserInfo user), [int messages = 30, int users = 6]) {
+getFillerTestMessages(UserInfo self, void addMessage(Message message, UserInfo user), {int messages = 30, int users = 6}) {
 
   // don't allow test messages to be shown in release mode
   if (kReleaseMode) {
