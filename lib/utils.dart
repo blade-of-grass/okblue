@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 import 'package:okbluemer/customizations.dart';
 
@@ -61,15 +60,15 @@ class UserInfo {
 }
 
 /// a class representing a "block" of messages sent by a single user
-class MessageBlock {
+class MessageGroup {
   final List<Message> messages;
   final UserInfo user;
 
   /// construct a MessageBlock from a list of messages and their associated user
-  MessageBlock({@required this.messages, @required this.user});
+  MessageGroup({@required this.messages, @required this.user});
 
   /// construct a MessageBlock with a single message and it's associated user
-  MessageBlock.withMessage({@required Message message, @required this.user})
+  MessageGroup.withMessage({@required Message message, @required this.user})
       : messages = [] {
     messages.add(message);
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:okbluemer/utils.dart';
 
 class MessageBox extends StatelessWidget {
-  final MessageBlock messageBlock;
+  final MessageGroup messageBlock;
   final CrossAxisAlignment alignment;
 
   MessageBox({
