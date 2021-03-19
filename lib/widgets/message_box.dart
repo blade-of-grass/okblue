@@ -26,13 +26,17 @@ class MessageBox extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(right: 8, left: 8),
             child: Row(
-              mainAxisAlignment: (alignment == CrossAxisAlignment.end ? MainAxisAlignment.end : MainAxisAlignment.start),
-              children: <Widget>[   
+              mainAxisAlignment: (alignment == CrossAxisAlignment.end
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.start),
+              children: <Widget>[
                 Icon(
-                    Icons.circle,
-                    color: (this.messageBlock.user.isOnline ? Colors.green : Colors.grey),
-                    size: 8,
-                  ),
+                  Icons.circle,
+                  color: (this.messageBlock.user.isOnline
+                      ? Colors.green
+                      : Colors.grey),
+                  size: 8,
+                ),
                 SizedBox(
                   width: 2,
                 ),

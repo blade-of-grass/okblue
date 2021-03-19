@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:okbluemer/pages/scan_page.dart';
 import 'package:okbluemer/utils.dart';
@@ -42,8 +41,15 @@ class _HomePageState extends State<HomePage> {
               onChanged: (inputedUserName) {
                 userName = inputedUserName;
               },
-              controller: TextEditingController(text: userName),
-              decoration: InputDecoration(hintText: "User Name"),
+              controller: TextEditingController(),
+              decoration: InputDecoration(
+                  hintText: userName,
+                  hintStyle: TextStyle(
+                    color: Colors.white.withOpacity(0.666),
+                  )),
+              style: TextStyle(
+                color: Colors.white,
+              ),
             ),
             SizedBox(
               height: 16,

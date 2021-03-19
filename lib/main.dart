@@ -21,14 +21,19 @@ class MyApp extends StatelessWidget {
     //           \ MessagePage
     //
 
-    return MessageBloc( // the message bloc contains all of the messages sent & received in the app
-      child: BluetoothBloc( // the bluetooth bloc manages all bluetooth connection info
+    return MessageBloc(
+      // the message bloc contains all of the messages sent & received in the app
+      child: BluetoothBloc(
+        // the bluetooth bloc manages all bluetooth connection info
         child: MaterialApp(
           title: 'Ok Bluemer',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            primarySwatch: Colors.indigo,
-            scaffoldBackgroundColor: HSLColor.fromColor(Colors.indigo).withSaturation(0.2).withLightness(0.1).toColor(),
+            primarySwatch: Colors.red,
+            scaffoldBackgroundColor: HSLColor.fromColor(Colors.indigo)
+                .withSaturation(0.2)
+                .withLightness(0.1)
+                .toColor(),
           ),
           home: HomePage(),
         ),
