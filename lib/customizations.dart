@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 final List<Color> _colorPalette = [
   Colors.amber[200],
   Colors.blue[200],
-  Colors.blueGrey[200],
   Colors.brown[200],
   Colors.cyan[200],
   Colors.deepOrange[200],

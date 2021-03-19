@@ -12,9 +12,7 @@ class MessageBloc extends StatefulWidget {
   MessageBlocState createState() => MessageBlocState();
 
   static MessageBlocState of(BuildContext context) {
-    // TODO: this probably doesn't need to be a stateful widget
-    final MessageBlocState result = context.findAncestorStateOfType<MessageBlocState>();
-    return result;
+    return context.findAncestorStateOfType<MessageBlocState>();
   }
 }
 

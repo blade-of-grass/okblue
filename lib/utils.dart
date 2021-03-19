@@ -123,3 +123,19 @@ String getFormattedTime(DateTime time) {
 
   return "$hour:$zeroPadding${time.minute}";
 }
+
+class EventListener {
+  final _listeners = Set<Function(dynamic)>();
+
+  void subscribe(Function(dynamic) listener) {
+    _listeners.add(listener);
+  }
+
+  void unsubscribe(Function(dynamic) listener) {
+    _listeners.remove(listener);
+  }
+
+  void fire(dynamic data) {
+    _listeners.forEach((listener) => listener(data));
+  }
+}
