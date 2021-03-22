@@ -26,27 +26,33 @@ class BluetoothBloc extends StatefulWidget {
 class BluetoothBlocState extends State<BluetoothBloc> {
   PermissionStatus _locationPermissionStatus = PermissionStatus.unknown;
 
+  Comms _comms;
+
   final Map<BluetoothEvent, EventListener> _events = {
     BluetoothEvent.onConnect: EventListener(),
     BluetoothEvent.onDisconnect: EventListener(),
     BluetoothEvent.onMessageReceived: EventListener(),
   };
 
-  Future<void> _checkPermissions() async {
-    // if (Platform.isAndroid) {
-    var permissionStatus = await PermissionHandler()
-        .requestPermissions([PermissionGroup.location]);
-
-    _locationPermissionStatus = permissionStatus[PermissionGroup.location];
-
-    if (_locationPermissionStatus != PermissionStatus.granted) {
-      return Future.error(Exception("Location permission not granted"));
-    }
-    // }
+  BluetoothBlocState() {
+    this._comms = Comms(onMessageReceived: _onMessageReceived);
   }
 
   scan(String username) async {
-    Comms.instance.sync(username);
+    await this._comms.sync(username);
+
+    this.fire(BluetoothEvent.onConnect);
+  }
+
+  sendMessage(Message message) {
+    this._comms.sendMessage(message.serialize());
+  }
+
+  _onMessageReceived(String data) {
+    this.fire(
+      BluetoothEvent.onMessageReceived,
+      Message.deserialize(data),
+    );
   }
 
   subscribe(BluetoothEvent event, Function(dynamic) f) {

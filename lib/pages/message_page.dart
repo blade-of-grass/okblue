@@ -1,14 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:okbluemer/blocs/bluetooth_bloc.dart';
 import 'package:okbluemer/blocs/message_bloc.dart';
 import 'package:okbluemer/utils.dart';
 import 'package:okbluemer/widgets/input_bar.dart';
 import 'package:okbluemer/widgets/message_list.dart';
 
-class MessagePage extends StatelessWidget {
+class MessagePage extends StatefulWidget {
   final UserInfo user;
-  final scrollController = ScrollController();
 
   MessagePage({@required this.user});
+
+  @override
+  _MessagePageState createState() => _MessagePageState();
+}
+
+class _MessagePageState extends State<MessagePage> {
+  final scrollController = ScrollController();
+  BluetoothBlocState bt;
+
+  @override
+  void initState() {
+    super.initState();
+
+    this.bt = BluetoothBloc.of(context);
+    this.bt.subscribe(BluetoothEvent.onMessageReceived, onMessageReceived);
+  }
+
+  onMessageReceived(dynamic message) {
+    MessageBloc.of(context)
+        .addMessage(message as Message, UserInfo(name: "unknown"));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +41,7 @@ class MessagePage extends StatelessWidget {
         children: [
           Expanded(
             child: MessageList(
-              user: this.user,
+              user: this.widget.user,
               scrollController: scrollController,
             ),
           ),
@@ -33,7 +54,8 @@ class MessagePage extends StatelessWidget {
   }
 
   void onClickSendMessage(BuildContext context, Message message) {
-    MessageBloc.of(context).addMessage(message, this.user);
+    MessageBloc.of(context).addMessage(message, this.widget.user);
+    bt.sendMessage(message);
 
     // scroll to the end when scrolled too far up (backup)
     scrollController.jumpTo(0);

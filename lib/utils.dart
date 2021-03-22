@@ -10,7 +10,7 @@ class UserInfo {
 
   UserInfo({
     @required String name,
-    @required this.userId,
+    this.userId = "",
     this.isOnline = true,
   })  : color = getRandomColor(),
         name = validateName(name);
@@ -52,6 +52,21 @@ class Message {
     @required this.time,
     @required this.messageText,
   });
+
+  static Message deserialize(String data) {
+    int delimiter = data.indexOf(" ");
+    String date = data.substring(0, delimiter);
+    String message = data.substring(delimiter + 1);
+
+    return Message(
+      time: DateTime.fromMicrosecondsSinceEpoch(int.parse(date)),
+      messageText: message,
+    );
+  }
+
+  String serialize() {
+    return time.millisecondsSinceEpoch.toString() + " " + messageText;
+  }
 }
 
 class NetworkState {

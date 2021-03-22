@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 
 class Comms {
@@ -11,20 +12,15 @@ class Comms {
 
   final service = Nearby();
 
+  final connections = Set<String>();
+
   bool isConnected = false;
   bool attemptingConnection = false;
   String username;
 
-  // beacon singleton
-  static Comms _instance;
-  static Comms get instance {
-    if (_instance == null) {
-      _instance = Comms._init();
-    }
-    return _instance;
-  }
+  Function(String) onMessageReceived;
 
-  Comms._init();
+  Comms({@required this.onMessageReceived});
 
   Future<bool> checkPermissions() async {
     final hasLocationPermissions = await this.service.checkLocationPermission();
@@ -86,7 +82,7 @@ class Comms {
     }
   }
 
-  void sync(String username) async {
+  Future<void> sync(String username) async {
     this.username = username;
     bool hasPermissions = await checkPermissions();
     if (!hasPermissions) {
@@ -140,7 +136,8 @@ class Comms {
 
     if (status == Status.CONNECTED) {
       this.isConnected = true;
-      service.sendBytesPayload(id, Uint8List.fromList("hello world".codeUnits));
+
+      this.connections.add(id);
     } else {
       attemptingConnection = false;
     }
@@ -157,7 +154,18 @@ class Comms {
     final message = String.fromCharCodes(bytes);
 
     print(message);
+    this.onMessageReceived(message);
   }
 
   void _onPayloadTransferUpdate(String id, PayloadTransferUpdate update) {}
+
+  void sendMessage(String message) {
+    if (this.isConnected) {
+      final bytes = Uint8List.fromList(message.codeUnits);
+
+      this.connections.forEach((connection) {
+        service.sendBytesPayload(connection, bytes);
+      });
+    }
+  }
 }
