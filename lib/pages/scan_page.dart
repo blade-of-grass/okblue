@@ -56,10 +56,10 @@ class _ScanPageState extends State<ScanPage> {
             Image.asset("assets/images/icon.png"),
             SizedBox(height: 48),
             Text(
-              "Scanning...",
+              "We're looking for a room for you, " + this.widget.username,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 18,
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),

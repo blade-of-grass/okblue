@@ -1,5 +1,7 @@
 // import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 
+import 'dart:async';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:nearby_connections/nearby_connections.dart';
@@ -10,6 +12,7 @@ class Comms {
   final service = Nearby();
 
   bool isConnected = false;
+  bool attemptingConnection = false;
   String username;
 
   // beacon singleton
@@ -38,7 +41,7 @@ class Comms {
     // Nearby().askExternalStoragePermission() ;
   }
 
-  void _advertise() async {
+  Future<void> _advertise() async {
     try {
       bool a = await this.service.startAdvertising(
             this.username,
@@ -54,7 +57,7 @@ class Comms {
     }
   }
 
-  void _discover() async {
+  Future<void> _discover() async {
     try {
       bool a = await this.service.startDiscovery(
         this.username,
@@ -90,13 +93,36 @@ class Comms {
       return;
     }
 
-    service.stopDiscovery();
-    service.stopAdvertising();
+    final _random = Random();
 
-    _discover();
-    _advertise();
+    while (!isConnected) {
+      // activate advertising mode
+      await _advertise();
 
-    while (!isConnected) {}
+      // wait in advertising mode between 2 & 6 seconds
+      await Future.delayed(Duration(seconds: _random.nextInt(5) + 2));
+
+      // if we are attempting a connection, stay here
+      await Future.doWhile(() async {
+        return this.attemptingConnection;
+      });
+
+      // stop advertising, prepare to switch to discovery mode
+      await service.stopAdvertising();
+      // if we found a connection get out of here
+      if (this.isConnected) break;
+
+      // enable discovery mode
+      await _discover();
+
+      //
+      await Future.delayed(Duration(seconds: _random.nextInt(5) + 2));
+      await Future.doWhile(() async {
+        return this.attemptingConnection;
+      });
+      await service.stopDiscovery();
+      if (this.isConnected) break;
+    }
   }
 
   void _onConnectionInitiated(String id, ConnectionInfo info) {
@@ -113,7 +139,10 @@ class Comms {
     print("onConnectionResult $id $status");
 
     if (status == Status.CONNECTED) {
+      this.isConnected = true;
       service.sendBytesPayload(id, Uint8List.fromList("hello world".codeUnits));
+    } else {
+      attemptingConnection = false;
     }
   }
 
