@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:okbluemer/comms/beacon.dart';
+import 'package:okbluemer/comms/comms.dart';
 import 'package:okbluemer/utils.dart';
 
 import 'package:permission_handler/permission_handler.dart';
@@ -45,9 +45,8 @@ class BluetoothBlocState extends State<BluetoothBloc> {
     // }
   }
 
-  scan() async {
-    Beacon.instance.write("ugh");
-    Beacon.instance.read();
+  scan(String username) async {
+    Comms.instance.sync(username);
   }
 
   subscribe(BluetoothEvent event, Function(dynamic) f) {

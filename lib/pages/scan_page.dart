@@ -23,7 +23,7 @@ class _ScanPageState extends State<ScanPage> {
     this.bt = BluetoothBloc.of(context);
     this.bt.subscribe(BluetoothEvent.onConnect, onConnect);
 
-    this.bt.scan();
+    this.bt.scan(this.widget.username);
   }
 
   @override

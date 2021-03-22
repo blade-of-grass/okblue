@@ -34,8 +34,8 @@ dependencies:
   # flutter_ble_peripheral: 0.3.0
   # flutter_ble_lib: 2.3.2
 
-  flutter_beacon: 0.3.0
-  beacon_broadcast: 0.2.3
+  # flutter_nearby_connections: 1.0.10
+  nearby_connections: 3.0.0
 
   device_info: 2.0.0
   permission_handler: ^4.2.0+hotfix.3
