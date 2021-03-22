@@ -96,3 +96,54 @@
 //       });
 //     });
 //   });
+
+
+
+
+    // await _checkPermissions();
+    // BleManager bleManager = BleManager();
+    // await bleManager.createClient();
+
+    // // bleManager.destroyClient();
+
+    // bleManager
+    //     .enableRadio(); //ANDROID-ONLY turns on BT. NOTE: doesn't check permissions
+    // bleManager.disableRadio() //ANDROID-ONLY turns off BT. NOTE: doesn't check permissions
+
+    // print(currentState);
+    // bleManager.observeBluetoothState().listen((btState) {
+    //   print(btState);
+    //   //do your BT logic, open different screen, etc.
+    // });
+
+    // const our_uuid = "d6052cb2-8aa0-11eb-8dcd-0242ac130003";
+
+    // // this part is needed for discoverable devices
+    // final data = AdvertiseData();
+    // data.uuid = our_uuid;
+    // final flutterPeripheral = FlutterBlePeripheral();
+    // flutterPeripheral.start(data);
+
+    // flutterPeripheral.getAdvertisingStateChange().listen((isAdvertising) {
+    //   if (isAdvertising) {
+    //     print("is advertising as ble peripheral");
+    //   } else {
+    //     print("not advertising as ble peripheral");
+    //     flutterPeripheral.start(data);
+    //   }
+    // });
+
+    // print("start peripheral scan");
+    // bleManager.startPeripheralScan(
+    //   uuids: [
+    //     our_uuid,
+    //   ],
+    // ).listen((scanResult) {
+    //   //Scan one peripheral and stop scanning
+
+    //   print(
+    //       "Scanned Peripheral ${scanResult.peripheral.name}, RSSI ${scanResult.rssi}");
+    //   bleManager.stopPeripheralScan();
+    //   // scanResult.peripheral.connect();
+    //   this.fire(BluetoothEvent.onConnect);
+    // });

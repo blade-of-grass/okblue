@@ -2,41 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:okbluemer/customizations.dart';
 
-class UUID {
-  int _upper, _lower;
-
-  UUID() {
-    // TODO: implement this properly based on the documentation here
-    // https://en.wikipedia.org/wiki/Universally_unique_identifier
-
-    // dart doesn't have a 128 bit integer type by default
-    // but int is 64 bits when not compiled to javascript
-    // so if we ever compile to javascript we'll have to handle this differently
-    _upper = 0;
-    _lower = 0;
-  }
-
-  @override
-  bool operator ==(other) =>
-      other is UUID &&
-      this._upper == other._upper &&
-      this._lower == other._lower;
-
-  @override
-  int get hashCode {
-    return 0;
-  }
-
-  @override
-  String toString() {
-    // TODO: implement toString
-    return "$_lower$_upper";
-  }
-}
-
 class UserInfo {
   final String name;
-  final UUID userId;
+  final String userId;
   final Color color;
   bool isOnline;
 
@@ -44,7 +12,8 @@ class UserInfo {
     @required String name,
     @required this.userId,
     this.isOnline = true,
-  }) : color = getRandomColor(), name = validateName(name);
+  })  : color = getRandomColor(),
+        name = validateName(name);
 
   static String generateUsername() {
     return getRandomName();
@@ -93,18 +62,18 @@ class NetworkState {
     _state[b].add(a);
   }
 
-  String serialize() {
-    String value = "";
-    for (final user in _state.keys) {
-      value += "user.id";
-      for (final connection in _state[user]) {
-        value += "connection.id" + "-";
-      }
-      value += ",";
-    }
+  // String serialize() {
+  //   String value = "";
+  //   for (final user in _state.keys) {
+  //     value += "user.id";
+  //     for (final connection in _state[user]) {
+  //       value += "connection.id" + "-";
+  //     }
+  //     value += ",";
+  //   }
 
-    return value;
-  }
+  //   return value;
+  // }
 }
 
 String getFormattedTime(DateTime time) {

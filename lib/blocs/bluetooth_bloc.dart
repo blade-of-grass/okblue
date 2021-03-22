@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_ble_lib/flutter_ble_lib.dart';
-import 'package:flutter_ble_peripheral/flutter_ble_peripheral.dart';
+import 'package:okbluemer/comms/beacon.dart';
 import 'package:okbluemer/utils.dart';
 
 import 'package:permission_handler/permission_handler.dart';
@@ -47,40 +46,8 @@ class BluetoothBlocState extends State<BluetoothBloc> {
   }
 
   scan() async {
-    await _checkPermissions();
-    // BleManager bleManager = BleManager();
-    // await bleManager.createClient();
-
-    // // bleManager.destroyClient();
-
-    // bleManager
-    //     .enableRadio(); //ANDROID-ONLY turns on BT. NOTE: doesn't check permissions
-    // // bleManager.disableRadio() //ANDROID-ONLY turns off BT. NOTE: doesn't check permissions
-    // final currentState = await bleManager.bluetoothState();
-    // print(currentState);
-    // bleManager.observeBluetoothState().listen((btState) {
-    //   print(btState);
-    //   //do your BT logic, open different screen, etc.
-    // });
-
-    const our_uuid = "d6052cb2-8aa0-11eb-8dcd-0242ac130003";
-
-    // bleManager.startPeripheralScan(
-    //   uuids: [
-    //     our_uuid,
-    //   ],
-    // ).listen((scanResult) {
-    //   //Scan one peripheral and stop scanning
-    //   print(
-    //       "Scanned Peripheral ${scanResult.peripheral.name}, RSSI ${scanResult.rssi}");
-    //   bleManager.stopPeripheralScan();
-    //   this.fire(BluetoothEvent.onConnect);
-    // });
-
-    // this part is needed for discoverable devices
-    final data = AdvertiseData();
-    data.uuid = our_uuid;
-    FlutterBlePeripheral().start(data);
+    Beacon.instance.write("ugh");
+    Beacon.instance.read();
   }
 
   subscribe(BluetoothEvent event, Function(dynamic) f) {

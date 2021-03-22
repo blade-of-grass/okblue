@@ -30,8 +30,13 @@ dependencies:
 
   # flutter_blue: 0.8.0
   # flutter_bluetooth_serial: 0.2.2
-  flutter_ble_peripheral: 0.3.0
-  flutter_ble_lib: 2.3.2
+
+  # flutter_ble_peripheral: 0.3.0
+  # flutter_ble_lib: 2.3.2
+
+  flutter_beacon: 0.3.0
+  beacon_broadcast: 0.2.3
+
   device_info: 2.0.0
   permission_handler: ^4.2.0+hotfix.3
   # uuid: 3.0.1

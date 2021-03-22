@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:okbluemer/blocs/message_bloc.dart';
-import 'package:okbluemer/filler_test_data.dart';
 import 'package:okbluemer/utils.dart';
 import 'package:okbluemer/widgets/input_bar.dart';
 import 'package:okbluemer/widgets/message_list.dart';

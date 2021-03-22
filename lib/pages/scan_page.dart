@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:okbluemer/blocs/bluetooth_bloc.dart';
 import 'package:okbluemer/pages/message_page.dart';
@@ -40,7 +38,7 @@ class _ScanPageState extends State<ScanPage> {
       context,
       MaterialPageRoute(
         builder: (context) => MessagePage(
-          user: UserInfo(name: this.widget.username, userId: UUID()),
+          user: UserInfo(name: this.widget.username, userId: "ugh"),
         ),
       ),
     );
