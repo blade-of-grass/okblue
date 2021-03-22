@@ -6,7 +6,6 @@ import 'package:okbluemer/widgets/input_bar.dart';
 import 'package:okbluemer/widgets/message_list.dart';
 
 class MessagePage extends StatelessWidget {
-
   final UserInfo user;
   final scrollController = ScrollController();
 
@@ -14,9 +13,8 @@ class MessagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final addMessage = MessageBloc.of(context).addMessage;
-    getFillerTestMessages(this.user, addMessage, messages: 300, users: 20);
+    // final addMessage = MessageBloc.of(context).addMessage;
+    // getFillerTestMessages(this.user, addMessage, messages: 300, users: 20);
 
     return Scaffold(
       body: Column(
@@ -40,7 +38,7 @@ class MessagePage extends StatelessWidget {
 
     // scroll to the end when scrolled too far up (backup)
     scrollController.jumpTo(0);
-  
+
     //scrollController.jumpTo(scrollController.position.maxScrollExtent);
 
     // scrollController.animateTo(

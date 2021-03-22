@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 final List<Color> _colorPalette = [
   Colors.amber[200],
   Colors.blue[200],
-  Colors.brown[200],
   Colors.cyan[200],
   Colors.deepOrange[200],
   Colors.deepPurple[200],
@@ -59,9 +58,9 @@ getRandomColor() {
 
 /// get a random name based on a list of adjectives & adverbs
 getRandomName() {
-    String begin = getRandomItemFromArray(_adjectives);
-    String end = getRandomItemFromArray(_nouns);
-    return "$begin $end";
+  String begin = getRandomItemFromArray(_adjectives);
+  String end = getRandomItemFromArray(_nouns);
+  return "$begin $end";
 }
 
 /// get a random element from an array

@@ -16,24 +16,16 @@ class ScanPage extends StatefulWidget {
 class _ScanPageState extends State<ScanPage> {
   // Need to add methods when detect connections
 
-  BluetoothBloc bt;
-
-  // TODO: remove this function once we actually implement bluetooth connections
-  goToMessagePage() async {
-    new Timer(Duration(
-      milliseconds:2000),
-      () => this.bt.fire(BluetoothEvent.onConnect),
-    );
-  }
+  BluetoothBlocState bt;
 
   @override
   void initState() {
     super.initState();
-    
+
     this.bt = BluetoothBloc.of(context);
     this.bt.subscribe(BluetoothEvent.onConnect, onConnect);
 
-    goToMessagePage();
+    this.bt.scan();
   }
 
   @override
@@ -48,10 +40,7 @@ class _ScanPageState extends State<ScanPage> {
       context,
       MaterialPageRoute(
         builder: (context) => MessagePage(
-          user: UserInfo(
-            name: this.widget.username,
-            userId: UUID()
-          ),
+          user: UserInfo(name: this.widget.username, userId: UUID()),
         ),
       ),
     );
