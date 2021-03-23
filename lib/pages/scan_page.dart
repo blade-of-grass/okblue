@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-// Using layout of homepage
+import 'package:okbluemer/pages/message_page.dart';
+import 'package:okbluemer/utils.dart';
 
 class ScanPage extends StatefulWidget {
   final String username;
@@ -14,9 +14,24 @@ class _ScanPageState extends State<ScanPage> {
   // Need to add methods when detect connections
 
   @override
+  void initState() {
+    super.initState();
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => MessagePage(
+                user: UserInfo(
+                  name: this.widget.username,
+                  userId: UUID()
+                ),
+              ),),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.cyan[400],
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 100),
         child: Column(
