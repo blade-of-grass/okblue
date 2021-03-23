@@ -18,7 +18,7 @@ class Comms {
   bool attemptingConnection = false;
   String username;
 
-  Function(String) onMessageReceived;
+  Function(String, String) onMessageReceived;
 
   Comms({@required this.onMessageReceived});
 
@@ -39,7 +39,7 @@ class Comms {
 
   Future<void> _advertise() async {
     try {
-      bool a = await this.service.startAdvertising(
+      await this.service.startAdvertising(
             this.username,
             Strategy.P2P_CLUSTER,
             onConnectionInitiated: this._onConnectionInitiated,
@@ -55,7 +55,7 @@ class Comms {
 
   Future<void> _discover() async {
     try {
-      bool a = await this.service.startDiscovery(
+      await this.service.startDiscovery(
         this.username,
         Strategy.P2P_CLUSTER,
         onEndpointFound: (String id, String userName, String serviceId) {
@@ -89,6 +89,8 @@ class Comms {
       return;
     }
 
+    await this.service.stopAllEndpoints();
+
     final _random = Random();
 
     while (!isConnected) {
@@ -119,6 +121,8 @@ class Comms {
       await service.stopDiscovery();
       if (this.isConnected) break;
     }
+
+    _advertise();
   }
 
   void _onConnectionInitiated(String id, ConnectionInfo info) {
@@ -154,7 +158,7 @@ class Comms {
     final message = String.fromCharCodes(bytes);
 
     print(message);
-    this.onMessageReceived(message);
+    this.onMessageReceived(id, message);
   }
 
   void _onPayloadTransferUpdate(String id, PayloadTransferUpdate update) {}

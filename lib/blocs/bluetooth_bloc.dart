@@ -2,8 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:okbluemer/comms/comms.dart';
 import 'package:okbluemer/utils.dart';
 
-import 'package:permission_handler/permission_handler.dart';
-
 enum BluetoothEvent {
   onConnect,
   onDisconnect,
@@ -24,8 +22,6 @@ class BluetoothBloc extends StatefulWidget {
 }
 
 class BluetoothBlocState extends State<BluetoothBloc> {
-  PermissionStatus _locationPermissionStatus = PermissionStatus.unknown;
-
   Comms _comms;
 
   final Map<BluetoothEvent, EventListener> _events = {
@@ -44,14 +40,15 @@ class BluetoothBlocState extends State<BluetoothBloc> {
     this.fire(BluetoothEvent.onConnect);
   }
 
-  sendMessage(Message message) {
-    this._comms.sendMessage(message.serialize());
+  sendMessage(Packet packet) {
+    this._comms.sendMessage(packet.serialize());
   }
 
-  _onMessageReceived(String data) {
+  _onMessageReceived(String id, String data) {
+    print(data);
     this.fire(
       BluetoothEvent.onMessageReceived,
-      Message.deserialize(data),
+      Packet.deserialize(data, id),
     );
   }
 

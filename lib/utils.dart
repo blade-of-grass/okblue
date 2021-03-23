@@ -2,15 +2,61 @@ import 'package:flutter/material.dart';
 
 import 'package:okbluemer/customizations.dart';
 
+class Packet {
+  UserInfo user;
+  Message message;
+
+  Packet({@required this.user, @required this.message});
+
+  static Packet deserialize(String data, String senderId) {
+    int start = 0;
+    int end = data.indexOf(" ", start);
+    final name = data.substring(start, end).replaceAll("%20", " ");
+
+    start = end + 1;
+    end = data.indexOf(" ", start);
+    final id = data.substring(start, end);
+
+    start = end + 1;
+    end = data.indexOf(" ", start);
+    String date = data.substring(start, end);
+
+    start = end + 1;
+    String message = data.substring(start);
+
+    return Packet(
+      message: Message(
+        time: DateTime.fromMillisecondsSinceEpoch(int.parse(date)),
+        text: message,
+      ),
+      user: UserInfo(
+        name: name,
+        id: id == UserInfo.DEFAULT_ID ? senderId : id,
+      ),
+    );
+  }
+
+  String serialize() {
+    final name = this.user.name.replaceAll(" ", "%20");
+    final id = this.user.id;
+    final time = this.message.time.millisecondsSinceEpoch.toString();
+    final text = this.message.text;
+
+    return "$name $id $time $text";
+  }
+}
+
 class UserInfo {
+  static const DEFAULT_ID = "me";
+
   final String name;
-  final String userId;
+  final String id;
   final Color color;
   bool isOnline;
 
   UserInfo({
     @required String name,
-    this.userId = "",
+    this.id = DEFAULT_ID,
     this.isOnline = true,
   })  : color = getRandomColor(),
         name = validateName(name);
@@ -37,36 +83,22 @@ class MessageGroup {
   MessageGroup({@required this.messages, @required this.user});
 
   /// construct a MessageBlock with a single message and it's associated user
-  MessageGroup.withMessage({@required Message message, @required this.user})
-      : messages = [] {
-    messages.add(message);
+  MessageGroup.withPacket(Packet packet)
+      : messages = [],
+        user = packet.user {
+    messages.add(packet.message);
   }
 }
 
 /// a class representing a single message, contains message text and time sent
 class Message {
-  final String messageText;
+  final String text;
   final DateTime time;
 
   Message({
     @required this.time,
-    @required this.messageText,
+    @required this.text,
   });
-
-  static Message deserialize(String data) {
-    int delimiter = data.indexOf(" ");
-    String date = data.substring(0, delimiter);
-    String message = data.substring(delimiter + 1);
-
-    return Message(
-      time: DateTime.fromMicrosecondsSinceEpoch(int.parse(date)),
-      messageText: message,
-    );
-  }
-
-  String serialize() {
-    return time.millisecondsSinceEpoch.toString() + " " + messageText;
-  }
 }
 
 class NetworkState {

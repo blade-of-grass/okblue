@@ -66,7 +66,7 @@ class MessageBox extends StatelessWidget {
             child: Column(
               crossAxisAlignment: alignment,
               children: [
-                Text(message.messageText),
+                Text(message.text),
                 SizedBox(height: 4),
                 Text(
                   getFormattedTime(message.time),

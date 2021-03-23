@@ -24,18 +24,17 @@ class MessageBlocState extends State<MessageBloc> {
 
   List<MessageGroup> get currentMessages => _messages;
 
-  void addMessage(Message message, UserInfo user) {
+  void addMessage(Packet packet) {
     if (this._messages.isNotEmpty) {
       final lastBlock = this._messages.last;
-      // TODO: switch this to user id
-      if (lastBlock.user == user) {
-        lastBlock.messages.add(message);
+      if (lastBlock.user.id == packet.user.id) {
+        lastBlock.messages.add(packet.message);
         this._messageStream.add(this._messages);
 
         return;
       }
     }
-    this._messages.add(MessageGroup.withMessage(message: message, user: user));
+    this._messages.add(MessageGroup.withPacket(packet));
     this._messageStream.add(this._messages);
   }
 

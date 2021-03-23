@@ -38,7 +38,7 @@ class _ScanPageState extends State<ScanPage> {
       context,
       MaterialPageRoute(
         builder: (context) => MessagePage(
-          user: UserInfo(name: this.widget.username, userId: "ugh"),
+          user: UserInfo(name: this.widget.username),
         ),
       ),
     );

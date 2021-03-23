@@ -36,9 +36,6 @@ dependencies:
 
   # flutter_nearby_connections: 1.0.10
   nearby_connections: 3.0.0
-
-  device_info: 2.0.0
-  permission_handler: ^4.2.0+hotfix.3
   # uuid: 3.0.1
 
 dev_dependencies:

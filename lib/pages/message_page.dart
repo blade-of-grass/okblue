@@ -26,9 +26,9 @@ class _MessagePageState extends State<MessagePage> {
     this.bt.subscribe(BluetoothEvent.onMessageReceived, onMessageReceived);
   }
 
-  onMessageReceived(dynamic message) {
-    MessageBloc.of(context)
-        .addMessage(message as Message, UserInfo(name: "unknown"));
+  onMessageReceived(dynamic data) {
+    final packet = data as Packet;
+    MessageBloc.of(context).addMessage(packet);
   }
 
   @override
@@ -54,8 +54,9 @@ class _MessagePageState extends State<MessagePage> {
   }
 
   void onClickSendMessage(BuildContext context, Message message) {
-    MessageBloc.of(context).addMessage(message, this.widget.user);
-    bt.sendMessage(message);
+    Packet packet = Packet(message: message, user: this.widget.user);
+    MessageBloc.of(context).addMessage(packet);
+    bt.sendMessage(packet);
 
     // scroll to the end when scrolled too far up (backup)
     scrollController.jumpTo(0);
