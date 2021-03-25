@@ -1,6 +1,7 @@
 // import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -155,7 +156,7 @@ class Comms {
     print("onPayLoadRecieved $id");
 
     final bytes = payload.bytes.toList(growable: false);
-    final message = String.fromCharCodes(bytes);
+    final message = utf8.decode(bytes);
 
     print(message);
     this.onMessageReceived(id, message);
@@ -165,10 +166,11 @@ class Comms {
 
   void sendMessage(String message) {
     if (this.isConnected) {
-      final bytes = Uint8List.fromList(message.codeUnits);
+      final bytes = utf8.encode(message);
+      final packet = Uint8List.fromList(bytes.toList(growable: false));
 
       this.connections.forEach((connection) {
-        service.sendBytesPayload(connection, bytes);
+        service.sendBytesPayload(connection, packet);
       });
     }
   }
