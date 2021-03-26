@@ -17,7 +17,7 @@ class Comms {
 
   String username;
 
-  Function(String, DateTime, String) onMessageReceived;
+  Function(String, String) onMessageReceived;
 
   Comms({@required this.onMessageReceived});
 
@@ -72,16 +72,28 @@ class Comms {
     print(message);
 
     // TODO: parse datetime from message
-    this.onMessageReceived(id, DateTime.now(), message);
+    // TODO: cache message by the substring that matches "id timestamp".
+    // TODO: This will be the id of the original sender, plus the timestamp the message was sent at.
+    // TODO: We will need to reference this cache before calling onMessageReceived
+    // TODO: if the message is already cached, then we don't need to trigger the event
+    // TODO: items will need to be evicted from cache every so often, maybe every minute remove items that are a minute+ old?
+    this.onMessageReceived(id, message);
 
-    // TODO: scan beginning of packet for sender_ids
-    // TODO: set list = connections - sender_ids
-    // TODO: set packet = "$id$message";
-    // TODO: this.sendMessage(sender_ids, packet);
+    // TODO: scan beginning of packet for tags
+
+    final tags = Set<String>();
+    this._encodeAndSendMessage("$id$message", excludedIds: tags);
   }
 
-  void sendMessage(String message, [Set<String> excludedIds]) {
-    final bytes = utf8.encode(message);
+  void sendMessage(String message, [DateTime time]) {
+    time ??= DateTime.now();
+    final timestamp = time.millisecondsSinceEpoch.toString();
+
+    _encodeAndSendMessage(" $timestamp $message");
+  }
+
+  void _encodeAndSendMessage(String message, {Set<String> excludedIds}) {
+    final Uint8List bytes = utf8.encode(message);
     final payload = Uint8List.fromList(bytes.toList(growable: false));
     final mailingList = connections.difference(excludedIds ?? []);
 

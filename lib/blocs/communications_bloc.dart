@@ -44,7 +44,7 @@ class CommunicationBlocState extends State<CommunicationBloc> {
     this._comms.sendMessage(packet.serialize());
   }
 
-  _onMessageReceived(String id, DateTime timestamp, String data) {
+  _onMessageReceived(String id, String data) {
     print(data);
     this.fire(
       CommunicationEvent.onMessageReceived,
