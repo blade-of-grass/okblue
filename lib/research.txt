@@ -1,0 +1,149 @@
+// DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+// AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+
+// Start scanning
+// .startScan(timeout: Duration(seconds: 40));
+
+// Listen to scan results
+// var subscription = flutterBlue.scanResults.listen((results) async {
+//   // do something with scan results
+//   results.forEach((r) async {
+//     print('${r.device.name} found! rssi: ${r.rssi}');
+
+//     await r.device.connect();
+//     print("made a connection!");
+//     List<BluetoothService> services = await r.device.discoverServices();
+//     services.forEach((service) {
+//       print("hi: " + service.uuid.toString());
+//     });
+//   });
+// });
+
+// Stop scanning
+// flutterBlue.stopScan();
+
+// this.fire(BluetoothEvent.onConnect);
+
+// await Future.doWhile(() async {
+//   // Wait if adapter not enabled
+//   if (await bt.isEnabled) {
+//     print("Bluetooth is enabled");
+//     return false;
+//   }
+//   await Future.delayed(Duration(milliseconds: 500));
+//   print("Bluetooth not enabled");
+//   return true;
+// });
+
+// if (await bt.isDiscovering) {
+//   await bt.cancelDiscovery();
+// }
+
+// if (await bt.isDiscoverable) {
+//   print("device is discoverable");
+// } else {
+//   print("device is not discoverable");
+//   await bt.requestDiscoverable(3600);
+// }
+
+// await Future.doWhile(() async {
+//   // Wait if adapter not enabled
+//   if (!(await bt.isDiscovering)) {
+//     bt.startDiscovery().listen((results) async {
+//       final address = results.device.address;
+//       print("Found device with address $address");
+//       BluetoothConnection connection =
+//           await BluetoothConnection.toAddress(address);
+//       print('Connected to the device');
+
+//       connection.input.listen((Uint8List data) {
+//         print('Data incoming: ${utf8.decode(data)}');
+//         connection.output.add(data); // Sending data
+
+//         if (ascii.decode(data).contains('!')) {
+//           connection.finish(); // Closing connection
+//           print('Disconnecting by local host');
+//         }
+//       }).onDone(() {
+//         print('Disconnected by remote request');
+//       });
+//     });
+//   } else {
+//     print("device is still discovering");
+//   }
+//   await Future.delayed(Duration(milliseconds: 2000));
+//   return true;
+// });
+
+// Listen to scan results
+//   var subscription = flutterBlue.scanResults.listen((results) async {
+//     // do something with scan results
+//     results.forEach((r) async {
+//       print('${r.device.name} found! rssi: ${r.rssi}');
+
+//       await r.device.connect();
+//       print("connected");
+//       for (var f in r.advertisementData.serviceUuids) {
+//         print(f);
+//         if (f == our_uuid) {
+//           print("finally");
+//         }
+//       }
+//       print("made a connection!");
+//       List<BluetoothService> services = await r.device.discoverServices();
+//       services.forEach((service) {
+//         print("hi: " + service.uuid.toString());
+//       });
+//     });
+//   });
+
+
+
+
+    // await _checkPermissions();
+    // BleManager bleManager = BleManager();
+    // await bleManager.createClient();
+
+    // // bleManager.destroyClient();
+
+    // bleManager
+    //     .enableRadio(); //ANDROID-ONLY turns on BT. NOTE: doesn't check permissions
+    // bleManager.disableRadio() //ANDROID-ONLY turns off BT. NOTE: doesn't check permissions
+
+    // print(currentState);
+    // bleManager.observeBluetoothState().listen((btState) {
+    //   print(btState);
+    //   //do your BT logic, open different screen, etc.
+    // });
+
+    // const our_uuid = "d6052cb2-8aa0-11eb-8dcd-0242ac130003";
+
+    // // this part is needed for discoverable devices
+    // final data = AdvertiseData();
+    // data.uuid = our_uuid;
+    // final flutterPeripheral = FlutterBlePeripheral();
+    // flutterPeripheral.start(data);
+
+    // flutterPeripheral.getAdvertisingStateChange().listen((isAdvertising) {
+    //   if (isAdvertising) {
+    //     print("is advertising as ble peripheral");
+    //   } else {
+    //     print("not advertising as ble peripheral");
+    //     flutterPeripheral.start(data);
+    //   }
+    // });
+
+    // print("start peripheral scan");
+    // bleManager.startPeripheralScan(
+    //   uuids: [
+    //     our_uuid,
+    //   ],
+    // ).listen((scanResult) {
+    //   //Scan one peripheral and stop scanning
+
+    //   print(
+    //       "Scanned Peripheral ${scanResult.peripheral.name}, RSSI ${scanResult.rssi}");
+    //   bleManager.stopPeripheralScan();
+    //   // scanResult.peripheral.connect();
+    //   this.fire(BluetoothEvent.onConnect);
+    // });

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:okbluemer/blocs/bluetooth_bloc.dart';
 import 'package:okbluemer/pages/message_page.dart';
 import 'package:okbluemer/utils.dart';
 
@@ -13,19 +14,33 @@ class ScanPage extends StatefulWidget {
 class _ScanPageState extends State<ScanPage> {
   // Need to add methods when detect connections
 
+  BluetoothBlocState bt;
+
   @override
   void initState() {
     super.initState();
 
-    Navigator.push(
+    this.bt = BluetoothBloc.of(context);
+    this.bt.subscribe(BluetoothEvent.onConnect, onConnect);
+
+    this.bt.scan(this.widget.username);
+  }
+
+  @override
+  void dispose() {
+    this.bt.unsubscribe(BluetoothEvent.onConnect, onConnect);
+
+    super.dispose();
+  }
+
+  void onConnect(dynamic _) {
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          builder: (context) => MessagePage(
-                user: UserInfo(
-                  name: this.widget.username,
-                  userId: UUID()
-                ),
-              ),),
+        builder: (context) => MessagePage(
+          user: UserInfo(name: this.widget.username),
+        ),
+      ),
     );
   }
 
@@ -39,11 +54,15 @@ class _ScanPageState extends State<ScanPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset("assets/images/icon.png"),
-            SizedBox(height: 120),
+            SizedBox(height: 48),
             Text(
-              "Scanning...",
+              "We're looking for a room for you, " + this.widget.username,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 30),
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),

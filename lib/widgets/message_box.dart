@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:okbluemer/utils.dart';
 
 class MessageBox extends StatelessWidget {
-  final MessageBlock messageBlock;
+  final MessageGroup messageBlock;
   final CrossAxisAlignment alignment;
 
   MessageBox({
@@ -26,13 +26,17 @@ class MessageBox extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(right: 8, left: 8),
             child: Row(
-              mainAxisAlignment: (alignment == CrossAxisAlignment.end ? MainAxisAlignment.end : MainAxisAlignment.start),
-              children: <Widget>[   
+              mainAxisAlignment: (alignment == CrossAxisAlignment.end
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.start),
+              children: <Widget>[
                 Icon(
-                    Icons.circle,
-                    color: (this.messageBlock.user.isOnline ? Colors.green : Colors.grey),
-                    size: 8,
-                  ),
+                  Icons.circle,
+                  color: (this.messageBlock.user.isOnline
+                      ? Colors.green
+                      : Colors.grey),
+                  size: 8,
+                ),
                 SizedBox(
                   width: 2,
                 ),
@@ -62,7 +66,7 @@ class MessageBox extends StatelessWidget {
             child: Column(
               crossAxisAlignment: alignment,
               children: [
-                Text(message.messageText),
+                Text(message.text),
                 SizedBox(height: 4),
                 Text(
                   getFormattedTime(message.time),

@@ -1,51 +1,65 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 import 'package:okbluemer/customizations.dart';
 
-class UUID {
-  int _upper, _lower;
+class Packet {
+  UserInfo user;
+  Message message;
 
-  UUID() {
-    // TODO: implement this properly based on the documentation here
-    // https://en.wikipedia.org/wiki/Universally_unique_identifier
+  Packet({@required this.user, @required this.message});
 
-    // dart doesn't have a 128 bit integer type by default
-    // but int is 64 bits when not compiled to javascript
-    // so if we ever compile to javascript we'll have to handle this differently
-    _upper = 0;
-    _lower = 0;
+  static Packet deserialize(String data, String senderId) {
+    int start = 0;
+    int end = data.indexOf(" ", start);
+    final name = data.substring(start, end).replaceAll("%20", " ");
+
+    start = end + 1;
+    end = data.indexOf(" ", start);
+    final id = data.substring(start, end);
+
+    start = end + 1;
+    end = data.indexOf(" ", start);
+    String date = data.substring(start, end);
+
+    start = end + 1;
+    String message = data.substring(start);
+
+    return Packet(
+      message: Message(
+        time: DateTime.fromMillisecondsSinceEpoch(int.parse(date)),
+        text: message,
+      ),
+      user: UserInfo(
+        name: name,
+        id: id == UserInfo.DEFAULT_ID ? senderId : id,
+      ),
+    );
   }
 
-  @override
-  bool operator ==(other) =>
-      other is UUID &&
-      this._upper == other._upper &&
-      this._lower == other._lower;
+  String serialize() {
+    final name = this.user.name.replaceAll(" ", "%20");
+    final id = this.user.id;
+    final time = this.message.time.millisecondsSinceEpoch.toString();
+    final text = this.message.text;
 
-  @override
-  int get hashCode {
-    return 0;
-  }
-
-  @override
-  String toString() {
-    // TODO: implement toString
-    return "$_lower$_upper";
+    return "$name $id $time $text";
   }
 }
 
 class UserInfo {
+  static const DEFAULT_ID = "me";
+
   final String name;
-  final UUID userId;
+  final String id;
   final Color color;
   bool isOnline;
 
   UserInfo({
     @required String name,
-    @required this.userId,
+    this.id = DEFAULT_ID,
     this.isOnline = true,
-  }) : color = getRandomColor(), name = validateName(name);
+  })  : color = getRandomColor(),
+        name = validateName(name);
 
   static String generateUsername() {
     return getRandomName();
@@ -61,28 +75,29 @@ class UserInfo {
 }
 
 /// a class representing a "block" of messages sent by a single user
-class MessageBlock {
+class MessageGroup {
   final List<Message> messages;
   final UserInfo user;
 
   /// construct a MessageBlock from a list of messages and their associated user
-  MessageBlock({@required this.messages, @required this.user});
+  MessageGroup({@required this.messages, @required this.user});
 
   /// construct a MessageBlock with a single message and it's associated user
-  MessageBlock.withMessage({@required Message message, @required this.user})
-      : messages = [] {
-    messages.add(message);
+  MessageGroup.withPacket(Packet packet)
+      : messages = [],
+        user = packet.user {
+    messages.add(packet.message);
   }
 }
 
 /// a class representing a single message, contains message text and time sent
 class Message {
-  final String messageText;
+  final String text;
   final DateTime time;
 
   Message({
     @required this.time,
-    @required this.messageText,
+    @required this.text,
   });
 }
 
@@ -94,18 +109,18 @@ class NetworkState {
     _state[b].add(a);
   }
 
-  String serialize() {
-    String value = "";
-    for (final user in _state.keys) {
-      value += "user.id";
-      for (final connection in _state[user]) {
-        value += "connection.id" + "-";
-      }
-      value += ",";
-    }
+  // String serialize() {
+  //   String value = "";
+  //   for (final user in _state.keys) {
+  //     value += "user.id";
+  //     for (final connection in _state[user]) {
+  //       value += "connection.id" + "-";
+  //     }
+  //     value += ",";
+  //   }
 
-    return value;
-  }
+  //   return value;
+  // }
 }
 
 String getFormattedTime(DateTime time) {
@@ -123,4 +138,20 @@ String getFormattedTime(DateTime time) {
   }
 
   return "$hour:$zeroPadding${time.minute}";
+}
+
+class EventListener {
+  final _listeners = Set<Function(dynamic)>();
+
+  void subscribe(Function(dynamic) listener) {
+    _listeners.add(listener);
+  }
+
+  void unsubscribe(Function(dynamic) listener) {
+    _listeners.remove(listener);
+  }
+
+  void fire(dynamic data) {
+    _listeners.forEach((listener) => listener(data));
+  }
 }
