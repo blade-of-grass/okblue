@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:okbluemer/blocs/bluetooth_bloc.dart';
+import 'package:okbluemer/blocs/communications_bloc.dart';
 import 'package:okbluemer/blocs/message_bloc.dart';
 import 'package:okbluemer/utils.dart';
 import 'package:okbluemer/widgets/input_bar.dart';
@@ -16,14 +16,14 @@ class MessagePage extends StatefulWidget {
 
 class _MessagePageState extends State<MessagePage> {
   final scrollController = ScrollController();
-  BluetoothBlocState bt;
+  CommunicationBlocState bt;
 
   @override
   void initState() {
     super.initState();
 
-    this.bt = BluetoothBloc.of(context);
-    this.bt.subscribe(BluetoothEvent.onMessageReceived, onMessageReceived);
+    this.bt = CommunicationBloc.of(context);
+    this.bt.subscribe(CommunicationEvent.onMessageReceived, onMessageReceived);
   }
 
   onMessageReceived(dynamic data) {

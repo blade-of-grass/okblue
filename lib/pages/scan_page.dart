@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:okbluemer/blocs/bluetooth_bloc.dart';
+import 'package:okbluemer/blocs/communications_bloc.dart';
 import 'package:okbluemer/pages/message_page.dart';
 import 'package:okbluemer/utils.dart';
 
@@ -14,21 +14,21 @@ class ScanPage extends StatefulWidget {
 class _ScanPageState extends State<ScanPage> {
   // Need to add methods when detect connections
 
-  BluetoothBlocState bt;
+  CommunicationBlocState bt;
 
   @override
   void initState() {
     super.initState();
 
-    this.bt = BluetoothBloc.of(context);
-    this.bt.subscribe(BluetoothEvent.onConnect, onConnect);
+    this.bt = CommunicationBloc.of(context);
+    this.bt.subscribe(CommunicationEvent.onConnect, onConnect);
 
     this.bt.scan(this.widget.username);
   }
 
   @override
   void dispose() {
-    this.bt.unsubscribe(BluetoothEvent.onConnect, onConnect);
+    this.bt.unsubscribe(CommunicationEvent.onConnect, onConnect);
 
     super.dispose();
   }
