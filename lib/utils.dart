@@ -53,7 +53,7 @@ class UserInfo {
     @required String name,
     this.id = DEFAULT_ID,
     this.isOnline = true,
-  })  : color = getRandomColor(),
+  })  : color = getDeterministicColor(id + name),
         name = validateName(name);
 
   static String generateUsername() {

@@ -52,8 +52,13 @@ const List<String> _nouns = [
 ];
 
 /// get a random color from a list of preselected colors
-getRandomColor() {
-  return getRandomItemFromArray(_colorPalette);
+getDeterministicColor(String seed) {
+  int index = 0;
+  for (int i = 0; i < seed.length; ++i) {
+    index += seed.codeUnitAt(i);
+  }
+
+  return _colorPalette[index % _colorPalette.length];
 }
 
 /// get a random name based on a list of adjectives & adverbs
