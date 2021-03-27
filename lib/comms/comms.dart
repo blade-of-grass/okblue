@@ -91,7 +91,7 @@ class Comms {
     if (this._cache.contains(cacheKey)) {
       this._cache.add(cacheKey);
 
-      this.onMessageReceived(id, message.substring(messageBeginIndex + 1));
+      this.onMessageReceived(origin, message.substring(messageBeginIndex + 1));
       this._encodeAndSendMessage("$id$message", excludedIds: tags);
     }
   }

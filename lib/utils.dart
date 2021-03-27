@@ -15,10 +15,6 @@ class Packet {
 
     start = end + 1;
     end = data.indexOf(" ", start);
-    final id = data.substring(start, end);
-
-    start = end + 1;
-    end = data.indexOf(" ", start);
     String date = data.substring(start, end);
 
     start = end + 1;
@@ -31,18 +27,17 @@ class Packet {
       ),
       user: UserInfo(
         name: name,
-        id: id == UserInfo.DEFAULT_ID ? senderId : id,
+        id: senderId,
       ),
     );
   }
 
   String serialize() {
     final name = this.user.name.replaceAll(" ", "%20");
-    final id = this.user.id;
     final time = this.message.time.millisecondsSinceEpoch.toString();
     final text = this.message.text;
 
-    return "$name $id $time $text";
+    return "$name $time $text";
   }
 }
 
