@@ -13,16 +13,14 @@ class Comms {
 
   final CommsHardware hardware = nearbyAPI;
 
-  final connections = Set<String>();
-
-  String username;
+  final _connections = Set<String>();
+  final _cache = Set<String>();
 
   Function(String, String) onMessageReceived;
 
   Comms({@required this.onMessageReceived});
 
   Future<void> beginScan(String username) async {
-    this.username = username;
     bool hasPermissions = await hardware.checkPermissions();
     if (!hasPermissions) {
       return;
@@ -44,7 +42,7 @@ class Comms {
   }
 
   void onConnectSuccess(String id) {
-    this.connections.add(id);
+    this._connections.add(id);
     // TODO: probably put this in some kind of event stream, so the UI can inform the user
   }
 
@@ -53,7 +51,7 @@ class Comms {
   }
 
   bool onDeviceFound(String id, String username) {
-    if (this.connections.contains(id)) {
+    if (this._connections.contains(id)) {
       return false;
     } else {
       // TODO: probably put this in some kind of event stream, so the UI can inform the user
@@ -62,7 +60,7 @@ class Comms {
   }
 
   void onDisconnect(String id) {
-    this.connections.remove(id);
+    this._connections.remove(id);
     // TODO: probably put this in some kind of event stream, so the UI can inform the user
   }
 
@@ -71,18 +69,31 @@ class Comms {
 
     print(message);
 
-    // TODO: parse datetime from message
-    // TODO: cache message by the substring that matches "id timestamp".
-    // TODO: This will be the id of the original sender, plus the timestamp the message was sent at.
-    // TODO: We will need to reference this cache before calling onMessageReceived
-    // TODO: if the message is already cached, then we don't need to trigger the event
-    // TODO: items will need to be evicted from cache every so often, maybe every minute remove items that are a minute+ old?
-    this.onMessageReceived(id, message);
-
-    // TODO: scan beginning of packet for tags
-
     final tags = Set<String>();
-    this._encodeAndSendMessage("$id$message", excludedIds: tags);
+
+    int index = 0;
+    String origin = id;
+    while (message[index] != ' ') {
+      ++index;
+
+      if (index % 4 == 0) {
+        origin = message.substring(index - 4, index);
+        tags.add(origin);
+      }
+    }
+
+    final messageBeginIndex = message.indexOf(" ", index + 1);
+    final timestamp = message.substring(index + 1, messageBeginIndex);
+
+    final cacheKey = "$origin $timestamp";
+
+    // TODO: items will need to be evicted from cache every so often, maybe every minute remove items that are a minute+ old?
+    if (this._cache.contains(cacheKey)) {
+      this._cache.add(cacheKey);
+
+      this.onMessageReceived(id, message.substring(messageBeginIndex + 1));
+      this._encodeAndSendMessage("$id$message", excludedIds: tags);
+    }
   }
 
   void sendMessage(String message, [DateTime time]) {
@@ -95,7 +106,7 @@ class Comms {
   void _encodeAndSendMessage(String message, {Set<String> excludedIds}) {
     final Uint8List bytes = utf8.encode(message);
     final payload = Uint8List.fromList(bytes.toList(growable: false));
-    final mailingList = connections.difference(excludedIds ?? []);
+    final mailingList = this._connections.difference(excludedIds ?? []);
 
     this.hardware.sendPayload(mailingList, payload);
   }
