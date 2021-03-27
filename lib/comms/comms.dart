@@ -106,9 +106,12 @@ class Comms {
   }
 
   void _encodeAndSendMessage(String message, {Set<String> excludedIds}) {
-    final Uint8List bytes = utf8.encode(message);
-    final payload = Uint8List.fromList(bytes.toList(growable: false));
     final mailingList = this._connections.difference(excludedIds ?? []);
+
+    final taggedIds = mailingList.reduce((String a, String b) => a + b);
+
+    final Uint8List bytes = utf8.encode(taggedIds + message);
+    final payload = Uint8List.fromList(bytes.toList(growable: false));
 
     this.hardware.sendPayload(mailingList, payload);
   }
