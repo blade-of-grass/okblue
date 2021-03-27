@@ -37,6 +37,7 @@ class CommunicationBlocState extends State<CommunicationBloc> {
   scan(String username) async {
     await this._comms.beginScan(username);
 
+    while (!this._comms.isConnected) {}
     this.fire(CommunicationEvent.onConnect);
   }
 

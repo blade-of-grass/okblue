@@ -20,6 +20,8 @@ class Comms {
 
   Comms({@required this.onMessageReceived});
 
+  bool get isConnected => this._connections.isNotEmpty;
+
   Future<void> beginScan(String username) async {
     bool hasPermissions = await hardware.checkPermissions();
     if (!hasPermissions) {
