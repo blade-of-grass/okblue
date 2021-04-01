@@ -173,9 +173,9 @@ class _NearbyAPI implements CommsHardware {
 
   void _onPayloadTransferUpdate(String id, PayloadTransferUpdate update) {}
 
-  /// iterates through [ids], sending [payload] to the connection represented by each one
-  void sendPayload(Set<String> ids, Uint8List payload) {
-    ids.forEach((connection) {
+  /// iterates through [mailingList], sending [payload] to the connection represented by each one
+  void sendPayload(Set<String> mailingList, Uint8List payload) {
+    mailingList.forEach((connection) {
       this._service.sendBytesPayload(connection, payload);
     });
   }

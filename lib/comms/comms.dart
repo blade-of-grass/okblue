@@ -16,6 +16,8 @@ class Comms {
   final _connections = Set<String>();
   final _cache = Set<String>();
 
+  String id;
+
   Function(String, String) onMessageReceived;
 
   Comms({@required this.onMessageReceived});
@@ -45,6 +47,7 @@ class Comms {
 
   void onConnectSuccess(String id) {
     this._connections.add(id);
+    this.hardware.sendPayload({id}, utf8.encode(id));
     // TODO: probably put this in some kind of event stream, so the UI can inform the user
   }
 
@@ -70,13 +73,21 @@ class Comms {
     final payload = utf8.decode(payloadBytes);
     print(payload);
 
+    // in the case where a message is only 4 bytes long we have received our
+    // endpoint id (this is hacky, should probably just implement proper
+    // message types instead, but for now it should do)
+    if (payload.length == 4) {
+      this.id = payload;
+      return;
+    }
+
     // get each user id attached to the beginning of the payload.
     // these user ids are assumed to be 4 bytes long each.
     // once a space is read the user ids have ended
     const USER_ID_LENGTH = 4;
     final tags = Set<String>();
     int index = 0;
-    String origin = id;
+    String origin;
     while (payload[index] != ' ') {
       ++index;
 
@@ -85,6 +96,8 @@ class Comms {
         tags.add(origin);
       }
     }
+
+    assert(origin != null);
 
     // extract the timestamp and message from the payload
     final messageBeginIndex = payload.indexOf(" ", index + 1);
@@ -100,7 +113,7 @@ class Comms {
       // TODO: items will need to be evicted from cache every so often, maybe every minute remove items that are a minute+ old?
 
       this.onMessageReceived(origin, message);
-      this._encodeAndSendMessage("$id$payload", excludedIds: tags);
+      this._encodeAndSendMessage(payload, excludedIds: tags);
     }
   }
 
@@ -108,7 +121,9 @@ class Comms {
     time ??= DateTime.now();
     final timestamp = time.millisecondsSinceEpoch.toString();
 
-    _encodeAndSendMessage(" $timestamp $message");
+    assert(this.id != null);
+
+    _encodeAndSendMessage("$id $timestamp $message");
   }
 
   void _encodeAndSendMessage(String message, {Set<String> excludedIds}) {
@@ -116,8 +131,7 @@ class Comms {
 
     final taggedIds = mailingList.reduce((String a, String b) => a + b);
 
-    final Uint8List bytes = utf8.encode(taggedIds + message);
-    final payload = Uint8List.fromList(bytes.toList(growable: false));
+    final payload = utf8.encode(taggedIds + message);
 
     this.hardware.sendPayload(mailingList, payload);
   }

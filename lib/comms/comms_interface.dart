@@ -19,7 +19,7 @@ abstract class CommsHardware {
   void endScan();
 
   /// send payload to all submitted ids
-  void sendPayload(Set<String> ids, Uint8List payload);
+  void sendPayload(Set<String> mailingList, Uint8List payload);
 }
 
 /// a config class that allows [CommsHardware] to interact with a higher layer of the app
