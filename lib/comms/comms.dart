@@ -66,35 +66,41 @@ class Comms {
     // TODO: probably put this in some kind of event stream, so the UI can inform the user
   }
 
-  void onPayloadReceived(String id, Uint8List payload) {
-    final message = utf8.decode(payload);
+  void onPayloadReceived(String id, Uint8List payloadBytes) {
+    final payload = utf8.decode(payloadBytes);
+    print(payload);
 
-    print(message);
-
+    // get each user id attached to the beginning of the payload.
+    // these user ids are assumed to be 4 bytes long each.
+    // once a space is read the user ids have ended
+    const USER_ID_LENGTH = 4;
     final tags = Set<String>();
-
     int index = 0;
     String origin = id;
-    while (message[index] != ' ') {
+    while (payload[index] != ' ') {
       ++index;
 
-      if (index % 4 == 0) {
-        origin = message.substring(index - 4, index);
+      if (index % USER_ID_LENGTH == 0) {
+        origin = payload.substring(index - USER_ID_LENGTH, index);
         tags.add(origin);
       }
     }
 
-    final messageBeginIndex = message.indexOf(" ", index + 1);
-    final timestamp = message.substring(index + 1, messageBeginIndex);
+    // extract the timestamp and message from the payload
+    final messageBeginIndex = payload.indexOf(" ", index + 1);
+    final timestamp = payload.substring(index + 1, messageBeginIndex);
+    final message = payload.substring(messageBeginIndex + 1);
 
     final cacheKey = "$origin $timestamp";
 
-    // TODO: items will need to be evicted from cache every so often, maybe every minute remove items that are a minute+ old?
+    // check if the message already exists in the cache
+    // if it does we discard it
     if (this._cache.contains(cacheKey)) {
       this._cache.add(cacheKey);
+      // TODO: items will need to be evicted from cache every so often, maybe every minute remove items that are a minute+ old?
 
-      this.onMessageReceived(origin, message.substring(messageBeginIndex + 1));
-      this._encodeAndSendMessage("$id$message", excludedIds: tags);
+      this.onMessageReceived(origin, message);
+      this._encodeAndSendMessage("$id$payload", excludedIds: tags);
     }
   }
 

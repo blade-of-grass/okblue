@@ -9,6 +9,8 @@ final CommsHardware nearbyAPI = _NearbyAPI.instance;
 class _NearbyAPI implements CommsHardware {
   CommsConfiguration _config;
   bool _shouldScan = false;
+
+  // a simple "reference counter" to keep track of pending connections
   int _pendingConnections = 0;
   final _service = Nearby();
 
@@ -96,26 +98,31 @@ class _NearbyAPI implements CommsHardware {
     await this._service.stopAllEndpoints();
 
     final _random = Random();
+    const baseDelaySeconds = 2;
+    const variationDelaySeconds = 5;
 
-    while (this._shouldScan) {
-      // activate advertising mode
+    Future.doWhile(() async {
       await _advertise();
 
       // wait in advertising mode between 2 & 6 seconds
-      await Future.delayed(Duration(seconds: _random.nextInt(5) + 2));
+      await Future.delayed(Duration(
+          seconds: baseDelaySeconds + _random.nextInt(variationDelaySeconds)));
 
       // if we are attempting a connection, stay here
-      await Future.doWhile(() async => this.attemptingConnection);
+      await Future.doWhile(() => this.attemptingConnection);
 
       // stop advertising, prepare to switch to discovery mode
       await this._service.stopAdvertising();
 
       // repeat the same process as above, but now in discovery mode
       await _discover();
-      await Future.delayed(Duration(seconds: _random.nextInt(5) + 2));
-      await Future.doWhile(() async => this.attemptingConnection);
+      await Future.delayed(Duration(
+          seconds: baseDelaySeconds + _random.nextInt(variationDelaySeconds)));
+      await Future.doWhile(() => this.attemptingConnection);
       await this._service.stopDiscovery();
-    }
+
+      return this._shouldScan;
+    });
   }
 
   void endScan() {
