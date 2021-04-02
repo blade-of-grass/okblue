@@ -37,7 +37,9 @@ class CommunicationBlocState extends State<CommunicationBloc> {
   scan(String username) async {
     await this._comms.beginScan(username);
 
-    await Future.doWhile(() => !this._comms.isConnected);
+    while (!this._comms.isConnected) {
+      await Future.delayed(const Duration(seconds: 1));
+    }
 
     this.fire(CommunicationEvent.onConnect);
   }

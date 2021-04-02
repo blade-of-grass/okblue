@@ -127,7 +127,7 @@ class Comms {
   }
 
   void _encodeAndSendMessage(String message, {Set<String> excludedIds}) {
-    final mailingList = this._connections.difference(excludedIds ?? []);
+    final mailingList = this._connections.difference(excludedIds ?? Set<String>());
 
     final taggedIds = mailingList.reduce((String a, String b) => a + b);
 
