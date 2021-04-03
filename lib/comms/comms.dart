@@ -126,9 +126,8 @@ class Comms {
     }
   }
 
-  void sendMessage(String message, [DateTime time]) {
-    time ??= DateTime.now();
-    final timestamp = time.millisecondsSinceEpoch.toString();
+  void sendMessage(String message) {
+    final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
 
     assert(this.id != null);
 

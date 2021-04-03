@@ -30,12 +30,12 @@ class CommunicationBlocState extends State<CommunicationBloc> {
     this._comms = Comms(_events);
   }
 
-  scan(String username) {
+  Future<void> scan(String username) {
     return this._comms.beginScan(username);
   }
 
-  sendMessage(Packet packet) {
-    this._comms.sendMessage(packet.serialize());
+  void sendMessage(String message) {
+    this._comms.sendMessage(message);
   }
 
   disconnect() {

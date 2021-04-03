@@ -3,6 +3,7 @@ import 'package:okbluemer/blocs/communications_bloc.dart';
 import 'package:okbluemer/blocs/message_bloc.dart';
 import 'package:okbluemer/comms/comms_utils.dart';
 import 'package:okbluemer/utils.dart';
+import 'package:okbluemer/widgets/custom_app_bar.dart';
 import 'package:okbluemer/widgets/input_bar.dart';
 import 'package:okbluemer/widgets/message_list.dart';
 
@@ -23,8 +24,15 @@ class _MessagePageState extends State<MessagePage> {
   void initState() {
     super.initState();
 
-    this.bt = CommunicationBloc.of(context);
-    this.bt.subscribe(CommunicationEvent.onMessageReceived, onMessageReceived);
+    bt = CommunicationBloc.of(context);
+    bt.subscribe(CommunicationEvent.onMessageReceived, onMessageReceived);
+  }
+
+  @override
+  void dispose() {
+    bt.unsubscribe(CommunicationEvent.onMessageReceived, onMessageReceived);
+
+    super.dispose();
   }
 
   onMessageReceived(dynamic payload) {
@@ -43,21 +51,26 @@ class _MessagePageState extends State<MessagePage> {
         // TODO: add an on-screen button that can also trigger a Navigator.pop event
         this.bt.disconnect();
         MessageBloc.of(context).clear();
+        print("safely disconnecting");
         return true;
       },
       child: Scaffold(
-        body: Column(
-          children: [
-            Expanded(
-              child: MessageList(
-                user: this.widget.user,
-                scrollController: scrollController,
+        body: SafeArea(
+          top: true,
+          child: Column(
+            children: [
+              CustomAppBar(),
+              Expanded(
+                child: MessageList(
+                  user: this.widget.user,
+                  scrollController: scrollController,
+                ),
               ),
-            ),
-            InputBar(
-              onSubmit: (message) => onClickSendMessage(context, message),
-            ),
-          ],
+              InputBar(
+                onSubmit: (message) => onClickSendMessage(context, message),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -66,7 +79,7 @@ class _MessagePageState extends State<MessagePage> {
   void onClickSendMessage(BuildContext context, Message message) {
     Packet packet = Packet(message: message, user: this.widget.user);
     MessageBloc.of(context).addMessage(packet);
-    bt.sendMessage(packet);
+    bt.sendMessage(packet.serialize());
 
     // scroll to the end when scrolled too far up (backup)
     scrollController.jumpTo(0);
