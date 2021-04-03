@@ -36,19 +36,25 @@ class _MessagePageState extends State<MessagePage> {
     // final addMessage = MessageBloc.of(context).addMessage;
     // getFillerTestMessages(this.user, addMessage, messages: 300, users: 20);
 
-    return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: MessageList(
-              user: this.widget.user,
-              scrollController: scrollController,
+    return WillPopScope(
+      onWillPop: () async {
+        this.bt.disconnect();
+        return true;
+      },
+      child: Scaffold(
+        body: Column(
+          children: [
+            Expanded(
+              child: MessageList(
+                user: this.widget.user,
+                scrollController: scrollController,
+              ),
             ),
-          ),
-          InputBar(
-            onSubmit: (message) => onClickSendMessage(context, message),
-          ),
-        ],
+            InputBar(
+              onSubmit: (message) => onClickSendMessage(context, message),
+            ),
+          ],
+        ),
       ),
     );
   }

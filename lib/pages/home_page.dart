@@ -63,9 +63,9 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                shape: MaterialStateProperty.all<OutlinedBorder>(
+                backgroundColor: MaterialStateProperty.all(Colors.white),
+                overlayColor: MaterialStateProperty.all(Colors.transparent),
+                shape: MaterialStateProperty.all(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(32.0),
                   ),

@@ -20,6 +20,9 @@ abstract class CommsHardware {
 
   /// send payload to all submitted ids
   void sendPayload(Set<String> mailingList, Uint8List payload);
+
+  /// disconnect from all other devices
+  Future<void> disconnect();
 }
 
 /// a config class that allows [CommsHardware] to interact with a higher layer of the app

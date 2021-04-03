@@ -22,7 +22,7 @@ class Comms {
 
   Comms({@required this.onMessageReceived});
 
-  bool get isConnected => this._connections.isNotEmpty;
+  bool get isConnected => this._connections.isNotEmpty && this.id != null;
 
   Future<void> beginScan(String username) async {
     bool hasPermissions = await hardware.checkPermissions();
@@ -47,6 +47,8 @@ class Comms {
 
   void onConnectSuccess(String id) {
     this._connections.add(id);
+
+    // send the user id back to the sender, so they know who they are
     this.hardware.sendPayload({id}, utf8.encode(id));
     // TODO: probably put this in some kind of event stream, so the UI can inform the user
   }
@@ -92,8 +94,12 @@ class Comms {
       ++index;
 
       if (index % USER_ID_LENGTH == 0) {
-        origin = payload.substring(index - USER_ID_LENGTH, index);
-        tags.add(origin);
+        final userID = payload.substring(index - USER_ID_LENGTH, index);
+        tags.add(userID);
+
+        // the last user id in the chain will be the origin
+        // by continuing to reassign origin we ensure this will be the case
+        origin = userID;
       }
     }
 
@@ -108,12 +114,11 @@ class Comms {
 
     // check if the message already exists in the cache
     // if it does we discard it
-    if (this._cache.contains(cacheKey)) {
-      this._cache.add(cacheKey);
+    if (!this._cache.contains(cacheKey)) {
       // TODO: items will need to be evicted from cache every so often, maybe every minute remove items that are a minute+ old?
+      this._cache.add(cacheKey);
 
       this._encodeAndSendMessage(payload, excludedIds: tags);
-    } else {
       this.onMessageReceived(origin, message);
     }
   }
@@ -128,12 +133,25 @@ class Comms {
   }
 
   void _encodeAndSendMessage(String message, {Set<String> excludedIds}) {
-    final mailingList = this._connections.difference(excludedIds ?? Set<String>());
+    final mailingList =
+        this._connections.difference(excludedIds ?? Set<String>());
 
     final taggedIds = mailingList.reduce((String a, String b) => a + b);
 
     final payload = utf8.encode(taggedIds + message);
 
     this.hardware.sendPayload(mailingList, payload);
+  }
+
+  Future<void> disconnect() {
+    // TODO: instead of having to clear the following 3 fields, consider putting
+    // them in a "network state" class that we simply set to null, and reassign
+    // when a new connection is created
+    this.id = null;
+    this._connections.clear();
+    this._cache.clear();
+
+    this.hardware.endScan();
+    return this.hardware.disconnect();
   }
 }

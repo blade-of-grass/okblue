@@ -126,6 +126,9 @@ class _NearbyAPI implements CommsHardware {
   }
 
   void endScan() {
+    // TODO: this needs to be rewritten to stop scanning immediately when called
+    // right now the loop initiated in beginScan will complete it's iteration
+    // before stopping
     this._shouldScan = false;
   }
 
@@ -166,7 +169,7 @@ class _NearbyAPI implements CommsHardware {
 
   /// triggers an onPayloadReceived event
   void _onPayloadReceived(String id, Payload payload) {
-    print("payload receieved from $id");
+    print("payload received from $id");
 
     this._config.onPayloadReceived(id, payload.bytes);
   }
@@ -179,4 +182,6 @@ class _NearbyAPI implements CommsHardware {
       this._service.sendBytesPayload(connection, payload);
     });
   }
+
+  Future<void> disconnect() => this._service.stopAllEndpoints();
 }
