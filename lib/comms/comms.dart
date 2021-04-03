@@ -112,8 +112,9 @@ class Comms {
       this._cache.add(cacheKey);
       // TODO: items will need to be evicted from cache every so often, maybe every minute remove items that are a minute+ old?
 
-      this.onMessageReceived(origin, message);
       this._encodeAndSendMessage(payload, excludedIds: tags);
+    } else {
+      this.onMessageReceived(origin, message);
     }
   }
 

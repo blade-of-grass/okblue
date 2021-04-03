@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               height: 16,
             ),
-            RaisedButton(
+            ElevatedButton(
               onPressed: _onClickContinue,
               child: Text(
                 "Continue",
@@ -62,11 +62,14 @@ class _HomePageState extends State<HomePage> {
                   color: Theme.of(context).scaffoldBackgroundColor,
                 ),
               ),
-              splashColor: Colors.white,
-              highlightColor: Colors.transparent,
-              color: Colors.white.withAlpha(220),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(32.0),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                shape: MaterialStateProperty.all<OutlinedBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(32.0),
+                  ),
+                ),
               ),
             ),
           ],
