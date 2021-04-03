@@ -98,13 +98,13 @@ class _NearbyAPI implements CommsHardware {
     await this._service.stopAllEndpoints();
 
     final _random = Random();
-    const baseDelaySeconds = 2;
-    const variationDelaySeconds = 5;
+    const baseDelaySeconds = 1;
+    const variationDelaySeconds = 9;
 
     Future.doWhile(() async {
       await _advertise();
 
-      // wait in advertising mode between 2 & 6 seconds
+      // wait in advertising mode
       await Future.delayed(Duration(
           seconds: baseDelaySeconds + _random.nextInt(variationDelaySeconds)));
 

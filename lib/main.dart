@@ -11,9 +11,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MessageBloc(
-      // the message bloc contains all of the messages sent & received in the app
+      // [MessageBloc] contains all of the messages sent & received in the app
       child: CommunicationBloc(
-        // the bluetooth bloc manages all bluetooth connection info
+        // [CommunicationBloc] manages all bluetooth connection info
         child: MaterialApp(
           title: 'Ok Bluemer',
           debugShowCheckedModeBanner: false,

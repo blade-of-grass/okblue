@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:okbluemer/blocs/communications_bloc.dart';
 import 'package:okbluemer/blocs/message_bloc.dart';
+import 'package:okbluemer/comms/comms_utils.dart';
 import 'package:okbluemer/utils.dart';
 import 'package:okbluemer/widgets/input_bar.dart';
 import 'package:okbluemer/widgets/message_list.dart';
@@ -26,8 +27,8 @@ class _MessagePageState extends State<MessagePage> {
     this.bt.subscribe(CommunicationEvent.onMessageReceived, onMessageReceived);
   }
 
-  onMessageReceived(dynamic data) {
-    final packet = data as Packet;
+  onMessageReceived(dynamic payload) {
+    final packet = Packet.deserialize(payload);
     MessageBloc.of(context).addMessage(packet);
   }
 
@@ -38,7 +39,10 @@ class _MessagePageState extends State<MessagePage> {
 
     return WillPopScope(
       onWillPop: () async {
+        // TODO: show a verification dialog before disconnecting the user
+        // TODO: add an on-screen button that can also trigger a Navigator.pop event
         this.bt.disconnect();
+        MessageBloc.of(context).clear();
         return true;
       },
       child: Scaffold(

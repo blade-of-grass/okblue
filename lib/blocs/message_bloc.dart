@@ -38,6 +38,10 @@ class MessageBlocState extends State<MessageBloc> {
     this._messageStream.add(this._messages);
   }
 
+  void clear() {
+    _messages.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return widget.child;

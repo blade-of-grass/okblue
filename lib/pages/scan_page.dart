@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:okbluemer/blocs/communications_bloc.dart';
+import 'package:okbluemer/comms/comms_utils.dart';
 import 'package:okbluemer/pages/message_page.dart';
 import 'package:okbluemer/utils.dart';
 
@@ -21,24 +22,24 @@ class _ScanPageState extends State<ScanPage> {
     super.initState();
 
     this.bt = CommunicationBloc.of(context);
-    this.bt.subscribe(CommunicationEvent.onConnect, onConnect);
+    this.bt.subscribe(CommunicationEvent.onJoin, onJoin);
 
     this.bt.scan(this.widget.username);
   }
 
   @override
   void dispose() {
-    this.bt.unsubscribe(CommunicationEvent.onConnect, onConnect);
+    this.bt.unsubscribe(CommunicationEvent.onJoin, onJoin);
 
     super.dispose();
   }
 
-  void onConnect(dynamic _) {
+  void onJoin(dynamic id) {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => MessagePage(
-          user: UserInfo(name: this.widget.username),
+          user: UserInfo(id: id, name: this.widget.username),
         ),
       ),
     );
@@ -46,25 +47,31 @@ class _ScanPageState extends State<ScanPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 100),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset("assets/images/icon.png"),
-            SizedBox(height: 48),
-            Text(
-              "We're looking for a room for you, " + this.widget.username,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () async {
+        this.bt.disconnect();
+        return true;
+      },
+      child: Scaffold(
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 100),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset("assets/images/icon.png"),
+              SizedBox(height: 48),
+              Text(
+                "We're looking for a room for you, " + this.widget.username,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

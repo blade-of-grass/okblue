@@ -1,12 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:okbluemer/comms/comms.dart';
+import 'package:okbluemer/comms/comms_utils.dart';
 import 'package:okbluemer/utils.dart';
-
-enum CommunicationEvent {
-  onConnect,
-  onDisconnect,
-  onMessageReceived,
-}
 
 class CommunicationBloc extends StatefulWidget {
   final Widget child;
@@ -28,20 +23,15 @@ class CommunicationBlocState extends State<CommunicationBloc> {
     CommunicationEvent.onConnect: EventListener(),
     CommunicationEvent.onDisconnect: EventListener(),
     CommunicationEvent.onMessageReceived: EventListener(),
+    CommunicationEvent.onJoin: EventListener(),
   };
 
   CommunicationBlocState() {
-    this._comms = Comms(onMessageReceived: _onMessageReceived);
+    this._comms = Comms(_events);
   }
 
-  scan(String username) async {
-    await this._comms.beginScan(username);
-
-    while (!this._comms.isConnected) {
-      await Future.delayed(const Duration(seconds: 1));
-    }
-
-    this.fire(CommunicationEvent.onConnect);
+  scan(String username) {
+    return this._comms.beginScan(username);
   }
 
   sendMessage(Packet packet) {
@@ -49,15 +39,8 @@ class CommunicationBlocState extends State<CommunicationBloc> {
   }
 
   disconnect() {
+    _events.forEach((event, listener) => listener.clear());
     return this._comms.disconnect();
-  }
-
-  _onMessageReceived(String id, String data) {
-    print(data);
-    this.fire(
-      CommunicationEvent.onMessageReceived,
-      Packet.deserialize(data, id),
-    );
   }
 
   subscribe(CommunicationEvent event, Function(dynamic) f) {
@@ -68,12 +51,14 @@ class CommunicationBlocState extends State<CommunicationBloc> {
     _events[event].unsubscribe(f);
   }
 
-  fire(CommunicationEvent event, [dynamic data]) {
-    _events[event].fire(data);
-  }
-
   @override
   Widget build(BuildContext context) {
     return this.widget.child;
+  }
+
+  @override
+  void dispose() {
+    this.disconnect();
+    super.dispose();
   }
 }

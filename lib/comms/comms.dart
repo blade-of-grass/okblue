@@ -4,23 +4,21 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
 import 'package:okbluemer/comms/comms_interface.dart';
+import 'package:okbluemer/comms/comms_utils.dart';
 import 'package:okbluemer/comms/nearby_api.dart';
 
 class Comms {
   static const SERVICE_ID = "com.okbluemer";
 
-  final CommsHardware hardware = nearbyAPI;
-
+  String id;
   final _connections = Set<String>();
   final _cache = Set<String>();
 
-  String id;
+  final CommsHardware hardware = nearbyAPI;
+  final Map<CommunicationEvent, EventListener> events;
 
-  Function(String, String) onMessageReceived;
-
-  Comms({@required this.onMessageReceived});
+  Comms(this.events);
 
   bool get isConnected => this._connections.isNotEmpty && this.id != null;
 
@@ -75,18 +73,20 @@ class Comms {
     final payload = utf8.decode(payloadBytes);
     print(payload);
 
+    const USER_ID_LENGTH = 4;
+
     // in the case where a message is only 4 bytes long we have received our
     // endpoint id (this is hacky, should probably just implement proper
     // message types instead, but for now it should do)
-    if (payload.length == 4) {
+    if (payload.length == USER_ID_LENGTH) {
       this.id = payload;
+      this.events[CommunicationEvent.onJoin].fire(this.id);
       return;
     }
 
     // get each user id attached to the beginning of the payload.
     // these user ids are assumed to be 4 bytes long each.
     // once a space is read the user ids have ended
-    const USER_ID_LENGTH = 4;
     final tags = Set<String>();
     int index = 0;
     String origin;
@@ -118,8 +118,11 @@ class Comms {
       // TODO: items will need to be evicted from cache every so often, maybe every minute remove items that are a minute+ old?
       this._cache.add(cacheKey);
 
+      this.events[CommunicationEvent.onMessageReceived].fire({
+        "origin": origin,
+        "message": message,
+      });
       this._encodeAndSendMessage(payload, excludedIds: tags);
-      this.onMessageReceived(origin, message);
     }
   }
 
@@ -136,7 +139,10 @@ class Comms {
     final mailingList =
         this._connections.difference(excludedIds ?? Set<String>());
 
-    final taggedIds = mailingList.reduce((String a, String b) => a + b);
+    // if the mailing list is empty we can short-circuit the entire process
+    // and not bother trying to forward the payload
+    if (mailingList.isEmpty) return;
+    final taggedIds = mailingList.reduce((a, b) => a + b);
 
     final payload = utf8.encode(taggedIds + message);
 
