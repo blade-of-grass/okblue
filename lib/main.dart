@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:okbluemer/blocs/bluetooth_bloc.dart';
+import 'package:okbluemer/blocs/message_bloc.dart';
+import 'package:okbluemer/pages/home_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -7,68 +10,32 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Ok Bluemer',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.indigo,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
+    // TODO: the MessageBloc and BluetoothBloc probably shouldn't be root dependencies of the app
+    // instead the hierarchy should be more like the following, but this can be refactored later
+    //
+    // MaterialApp
+    // \ HomePage
+    //     MessageBloc
+    //       \ BluetoothBloc
+    //           \ ScanPage
+    //           \ MessagePage
+    //
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  String userName;
-  void _onClickContinue() {
-    print(userName);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.cyan[400],
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 100),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.red[300],
-                shape: BoxShape.circle,
-              ),
-              width: 180,
-              height: 180,
-            ),
-            SizedBox(
-              height: 180,
-            ),
-            TextField(
-              onChanged: (inputedUserName) {
-                userName = inputedUserName;
-              },
-              decoration: InputDecoration(hintText: "User Name"),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            RaisedButton(
-              onPressed: _onClickContinue,
-              child: Text("Continue"),
-            ),
-          ],
+    return MessageBloc(
+      // the message bloc contains all of the messages sent & received in the app
+      child: BluetoothBloc(
+        // the bluetooth bloc manages all bluetooth connection info
+        child: MaterialApp(
+          title: 'Ok Bluemer',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.red,
+            scaffoldBackgroundColor: HSLColor.fromColor(Colors.indigo)
+                .withSaturation(0.2)
+                .withLightness(0.1)
+                .toColor(),
+          ),
+          home: HomePage(),
         ),
       ),
     );
