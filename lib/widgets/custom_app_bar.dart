@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:okbluemer/colors.dart';
 
 class CustomAppBar extends StatelessWidget {
   @override
@@ -7,7 +8,7 @@ class CustomAppBar extends StatelessWidget {
       width: double.infinity,
       height: 50,
       child: DecoratedBox(
-        decoration: BoxDecoration(color: Colors.black54),
+        decoration: BoxDecoration(color: appBarColor),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -16,10 +17,13 @@ class CustomAppBar extends StatelessWidget {
               onPressed: () => Navigator.maybePop(context),
               color: Colors.white,
             ),
-            Text(
-              "1 active user",
-              style: TextStyle(
-                color: Colors.white,
+            Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: Text(
+                "1 active user",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
               ),
             ),
           ],
