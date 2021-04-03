@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:okbluemer/blocs/communications_bloc.dart';
+import 'package:okbluemer/pages/message_page.dart';
 import 'package:okbluemer/pages/scan_page.dart';
 import 'package:okbluemer/utils.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
-
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -20,10 +20,26 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onClickContinue() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ScanPage(userName)),
-    );
+    final commBloc = CommunicationBloc.of(context);
+
+    if (commBloc.isConnected) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MessagePage(
+            user: UserInfo(
+              id: commBloc.id,
+              name: this.userName,
+            ),
+          ),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ScanPage(userName)),
+      );
+    }
   }
 
   @override

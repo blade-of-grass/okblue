@@ -68,6 +68,10 @@ class UserInfo {
       return submittedName;
     }
   }
+
+  bool commpareIdentifiers(UserInfo other) {
+    return this.id == other.id && this.name == other.name;
+  }
 }
 
 /// a class representing a "block" of messages sent by a single user

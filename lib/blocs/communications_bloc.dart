@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:okbluemer/comms/comms.dart';
 import 'package:okbluemer/comms/comms_utils.dart';
-import 'package:okbluemer/utils.dart';
 
 class CommunicationBloc extends StatefulWidget {
   final Widget child;
@@ -30,17 +29,29 @@ class CommunicationBlocState extends State<CommunicationBloc> {
     this._comms = Comms(_events);
   }
 
-  Future<void> scan(String username) {
-    return this._comms.beginScan(username);
+  @override
+  void initState() {
+    super.initState();
+    this._comms.beginScan("");
   }
+
+  @override
+  void dispose() async {
+    _events.forEach((event, listener) => listener.clear());
+    await this._comms.disconnect();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return this.widget.child;
+  }
+
+  bool get isConnected => this._comms.isConnected;
+  String get id => this._comms.id;
 
   void sendMessage(String message) {
     this._comms.sendMessage(message);
-  }
-
-  disconnect() {
-    _events.forEach((event, listener) => listener.clear());
-    return this._comms.disconnect();
   }
 
   subscribe(CommunicationEvent event, Function(dynamic) f) {
@@ -49,16 +60,5 @@ class CommunicationBlocState extends State<CommunicationBloc> {
 
   unsubscribe(CommunicationEvent event, Function(dynamic) f) {
     _events[event].unsubscribe(f);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return this.widget.child;
-  }
-
-  @override
-  void dispose() {
-    this.disconnect();
-    super.dispose();
   }
 }
