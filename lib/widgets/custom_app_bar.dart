@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:okbluemer/configs.dart';
+import 'package:okbluemer/blocs/communications_bloc.dart';
 
 class CustomAppBar extends StatelessWidget {
   @override
@@ -19,11 +20,19 @@ class CustomAppBar extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.only(right: 16),
-              child: Text(
-                "1 active user",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
+              child: StreamBuilder<int>(
+                stream: CommunicationBloc.of(context).connectionsStream,
+                initialData: 1,
+                builder: (context, connectionSnapshot) {
+                  final count = connectionSnapshot.data;
+
+                  return Text(
+                    "$count active user",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  );
+                },
               ),
             ),
           ],

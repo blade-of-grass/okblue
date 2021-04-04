@@ -14,11 +14,14 @@ class Comms {
   String id;
   final _connections = Set<String>();
   final _cache = Set<String>();
+  final _activeUsers = StreamController<int>.broadcast();
 
   final CommsHardware hardware = nearbyAPI;
   final Map<CommunicationEvent, EventListener> events;
 
   Comms(this.events);
+
+  Stream<int> get connectionsStream => _activeUsers.stream;
 
   bool get isConnected => this._connections.isNotEmpty && this.id != null;
 
@@ -45,7 +48,8 @@ class Comms {
 
   void onConnectSuccess(String id) {
     this._connections.add(id);
-
+    _activeUsers.add(_connections.length);
+    
     // send the user id back to the sender, so they know who they are
     this.hardware.sendPayload({id}, utf8.encode(id));
     // TODO: probably put this in some kind of event stream, so the UI can inform the user
@@ -66,6 +70,7 @@ class Comms {
 
   void onDisconnect(String id) {
     this._connections.remove(id);
+    _activeUsers.add(_connections.length);
 
     if (this._connections.isEmpty) {
       this.id = null;

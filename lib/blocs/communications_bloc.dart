@@ -18,6 +18,8 @@ class CommunicationBloc extends StatefulWidget {
 class CommunicationBlocState extends State<CommunicationBloc> {
   Comms _comms;
 
+  Stream<int> get connectionsStream => _comms.connectionsStream;
+
   final Map<CommunicationEvent, EventListener> _events = {
     CommunicationEvent.onConnect: EventListener(),
     CommunicationEvent.onDisconnect: EventListener(),
