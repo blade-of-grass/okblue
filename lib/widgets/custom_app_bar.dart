@@ -20,19 +20,31 @@ class CustomAppBar extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.only(right: 16),
-              child: StreamBuilder<int>(
-                stream: CommunicationBloc.of(context).connectionsStream,
-                initialData: 1,
-                builder: (context, connectionSnapshot) {
-                  final count = connectionSnapshot.data;
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.circle,
+                    color: Colors.green,
+                    size: 8,
+                  ),
+                  SizedBox(
+                    width: 2,
+                  ),
+                  StreamBuilder<int>(
+                    stream: CommunicationBloc.of(context).connectionsStream,
+                    initialData: 1,
+                    builder: (context, connectionSnapshot) {
+                      final count = connectionSnapshot.data;
 
-                  return Text(
-                    "$count active user",
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  );
-                },
+                      return Text(
+                        "$count active " + (count != 1 ? 'users' : 'user'),
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
           ],
