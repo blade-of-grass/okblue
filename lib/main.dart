@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
           title: 'Ok Bluemer',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            primarySwatch: Colors.red,
+            primarySwatch: Colors.deepOrange,
             scaffoldBackgroundColor: backgroundColor,
           ),
           home: HomePage(),

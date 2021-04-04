@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:okbluemer/blocs/communications_bloc.dart';
+import 'package:okbluemer/colors.dart';
 import 'package:okbluemer/pages/message_page.dart';
 import 'package:okbluemer/pages/scan_page.dart';
 import 'package:okbluemer/utils.dart';
@@ -15,7 +16,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
     userName = UserInfo.generateUsername();
   }
 

@@ -66,6 +66,10 @@ class Comms {
 
   void onDisconnect(String id) {
     this._connections.remove(id);
+
+    if (this._connections.isEmpty) {
+      this.id = null;
+    }
     // TODO: probably put this in some kind of event stream, so the UI can inform the user
   }
 

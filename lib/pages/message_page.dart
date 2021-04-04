@@ -50,7 +50,6 @@ class _MessagePageState extends State<MessagePage> {
         // TODO: show a verification dialog before disconnecting the user
         // TODO: add an on-screen button that can also trigger a Navigator.pop event
         MessageBloc.of(context).clear();
-        print("safely disconnecting");
         return true;
       },
       child: Scaffold(
