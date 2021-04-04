@@ -53,22 +53,27 @@ class _MessagePageState extends State<MessagePage> {
         return true;
       },
       child: Scaffold(
-        body: SafeArea(
-          top: true,
-          child: Column(
-            children: [
-              CustomAppBar(),
-              Expanded(
-                child: MessageList(
-                  user: this.widget.user,
-                  scrollController: scrollController,
+        body: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: MessageList(
+                    user: this.widget.user,
+                    scrollController: scrollController,
+                  ),
                 ),
-              ),
-              InputBar(
-                onSubmit: (message) => onClickSendMessage(context, message),
-              ),
-            ],
-          ),
+                InputBar(
+                  onSubmit: (message) => onClickSendMessage(context, message),
+                ),
+              ],
+            ),
+            SafeArea(
+              top: true,
+              child: CustomAppBar(),
+            ),
+          ],
         ),
       ),
     );
