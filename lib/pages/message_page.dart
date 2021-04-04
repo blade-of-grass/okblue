@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:okbluemer/blocs/communications_bloc.dart';
 import 'package:okbluemer/blocs/message_bloc.dart';
@@ -56,6 +58,7 @@ class _MessagePageState extends State<MessagePage> {
         body: Stack(
           alignment: Alignment.topCenter,
           children: [
+            // message list & input field
             Column(
               children: [
                 Expanded(
@@ -69,9 +72,15 @@ class _MessagePageState extends State<MessagePage> {
                 ),
               ],
             ),
-            SafeArea(
-              top: true,
-              child: CustomAppBar(),
+            // header
+            ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                child: SafeArea(
+                  top: true,
+                  child: CustomAppBar(),
+                ),
+              ),
             ),
           ],
         ),
