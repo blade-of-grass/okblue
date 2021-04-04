@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:okbluemer/blocs/communications_bloc.dart';
-import 'package:okbluemer/colors.dart';
+import 'package:okbluemer/configs.dart';
 import 'package:okbluemer/pages/message_page.dart';
 import 'package:okbluemer/pages/scan_page.dart';
 import 'package:okbluemer/utils.dart';
@@ -57,6 +57,7 @@ class _HomePageState extends State<HomePage> {
               onChanged: (inputedUserName) {
                 userName = inputedUserName;
               },
+              maxLength: MAX_NAME_LENGTH,
               controller: TextEditingController(),
               decoration: InputDecoration(
                   hintText: userName,

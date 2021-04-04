@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:okbluemer/blocs/communications_bloc.dart';
 import 'package:okbluemer/blocs/message_bloc.dart';
-import 'package:okbluemer/colors.dart';
+import 'package:okbluemer/configs.dart';
 import 'package:okbluemer/pages/home_page.dart';
 
 void main() {

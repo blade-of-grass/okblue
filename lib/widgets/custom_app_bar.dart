@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:okbluemer/colors.dart';
+import 'package:okbluemer/configs.dart';
 
 class CustomAppBar extends StatelessWidget {
   @override
