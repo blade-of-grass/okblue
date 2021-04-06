@@ -2,176 +2,165 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
-import 'package:nearby_connections/nearby_connections.dart';
+import 'package:okbluemer/comms/comms_interface.dart';
+import 'package:okbluemer/comms/comms_utils.dart';
+import 'package:okbluemer/comms/nearby_api.dart';
 
 class Comms {
   static const SERVICE_ID = "com.okbluemer";
 
-  final service = Nearby();
+  String id;
+  final _connections = Set<String>();
+  final _cache = Set<String>();
 
-  final connections = Set<String>();
+  final CommsHardware hardware = nearbyAPI;
+  final Map<CommunicationEvent, EventListener> events;
 
-  bool isConnected = false;
-  bool attemptingConnection = false;
-  String username;
+  Comms(this.events);
 
-  Function(String, String) onMessageReceived;
+  bool get isConnected => this._connections.isNotEmpty && this.id != null;
 
-  Comms({@required this.onMessageReceived});
-
-  Future<bool> checkPermissions() async {
-    final hasLocationPermissions = await this.service.checkLocationPermission();
-
-    if (!hasLocationPermissions) {
-      return await this.service.askLocationPermission();
-    } else {
-      return true;
-    }
-
-    // // OPTIONAL: if you need to transfer files and rename it on device
-    // bool b = await this.service.checkExternalStoragePermission();
-    // // asks for READ + WRTIE EXTERNAL STORAGE permission only if its not given
-    // Nearby().askExternalStoragePermission() ;
-  }
-
-  Future<void> _advertise() async {
-    try {
-      await this.service.startAdvertising(
-            this.username,
-            Strategy.P2P_CLUSTER,
-            onConnectionInitiated: this._onConnectionInitiated,
-            onConnectionResult: this._onConnectionResult,
-            onDisconnected: this._onDisconnected,
-            serviceId: Comms.SERVICE_ID,
-          );
-    } catch (e) {
-      print(e);
-      print("threw in advertiser");
-    }
-  }
-
-  Future<void> _discover() async {
-    try {
-      await this.service.startDiscovery(
-        this.username,
-        Strategy.P2P_CLUSTER,
-        onEndpointFound: (String id, String userName, String serviceId) {
-          print("found advertiser with name $userName and id $id");
-
-          service.requestConnection(
-            userName,
-            id,
-            onConnectionInitiated: this._onConnectionInitiated,
-            onConnectionResult: this._onConnectionResult,
-            onDisconnected: this._onDisconnected,
-          );
-
-          service.stopDiscovery();
-        },
-        onEndpointLost: (String id) {
-          // called when an advertiser is lost (only if we weren't connected to it )
-        },
-        serviceId: Comms.SERVICE_ID,
-      );
-    } catch (e) {
-      print(e);
-      print("threw in discovery");
-    }
-  }
-
-  Future<void> sync(String username) async {
-    this.username = username;
-    bool hasPermissions = await checkPermissions();
+  Future<void> beginScan(String username) async {
+    bool hasPermissions = await hardware.checkPermissions();
     if (!hasPermissions) {
       return;
     }
 
-    await this.service.stopAllEndpoints();
-
-    final _random = Random();
-
-    while (!isConnected) {
-      // activate advertising mode
-      await _advertise();
-
-      // wait in advertising mode between 2 & 6 seconds
-      await Future.delayed(Duration(seconds: _random.nextInt(5) + 2));
-
-      // if we are attempting a connection, stay here
-      await Future.doWhile(() async {
-        return this.attemptingConnection;
-      });
-
-      // stop advertising, prepare to switch to discovery mode
-      await service.stopAdvertising();
-      // if we found a connection get out of here
-      if (this.isConnected) break;
-
-      // enable discovery mode
-      await _discover();
-
-      //
-      await Future.delayed(Duration(seconds: _random.nextInt(5) + 2));
-      await Future.doWhile(() async {
-        return this.attemptingConnection;
-      });
-      await service.stopDiscovery();
-      if (this.isConnected) break;
-    }
-
-    _advertise();
+    this.hardware.beginScan(CommsConfiguration(
+          username: username,
+          serviceID: Comms.SERVICE_ID,
+          onConnectSuccess: this.onConnectSuccess,
+          onConnectFail: this.onConnectFail,
+          onDeviceFound: this.onDeviceFound,
+          onDisconnect: this.onDisconnect,
+          onPayloadReceived: this.onPayloadReceived,
+        ));
   }
 
-  void _onConnectionInitiated(String id, ConnectionInfo info) {
-    print("onConnectionInitiated $id");
-
-    service.acceptConnection(
-      id,
-      onPayLoadRecieved: this._onPayloadReceived,
-      onPayloadTransferUpdate: this._onPayloadTransferUpdate,
-    );
+  void endScan() async {
+    this.hardware.endScan();
   }
 
-  void _onConnectionResult(String id, Status status) {
-    print("onConnectionResult $id $status");
+  void onConnectSuccess(String id) {
+    this._connections.add(id);
 
-    if (status == Status.CONNECTED) {
-      this.isConnected = true;
+    // send the user id back to the sender, so they know who they are
+    this.hardware.sendPayload({id}, utf8.encode(id));
+    // TODO: probably put this in some kind of event stream, so the UI can inform the user
+  }
 
-      this.connections.add(id);
+  void onConnectFail(String id) {
+    // TODO: probably put this in some kind of event stream, so the UI can inform the user
+  }
+
+  bool onDeviceFound(String id, String username) {
+    if (this._connections.contains(id)) {
+      return false;
     } else {
-      attemptingConnection = false;
+      // TODO: probably put this in some kind of event stream, so the UI can inform the user
+      return true;
     }
   }
 
-  void _onDisconnected(String id) {
-    print("onDisconnected $id");
+  void onDisconnect(String id) {
+    this._connections.remove(id);
+
+    if (this._connections.isEmpty) {
+      this.id = null;
+    }
+    // TODO: probably put this in some kind of event stream, so the UI can inform the user
   }
 
-  void _onPayloadReceived(String id, Payload payload) {
-    print("onPayLoadRecieved $id");
+  void onPayloadReceived(String id, Uint8List payloadBytes) {
+    final payload = utf8.decode(payloadBytes);
+    print(payload);
 
-    final bytes = payload.bytes.toList(growable: false);
-    final message = utf8.decode(bytes);
+    const USER_ID_LENGTH = 4;
 
-    print(message);
-    this.onMessageReceived(id, message);
+    // in the case where a message is only 4 bytes long we have received our
+    // endpoint id (this is hacky, should probably just implement proper
+    // message types instead, but for now it should do)
+    if (payload.length == USER_ID_LENGTH) {
+      this.id = payload;
+      this.events[CommunicationEvent.onJoin].fire(this.id);
+      return;
+    }
+
+    // get each user id attached to the beginning of the payload.
+    // these user ids are assumed to be 4 bytes long each.
+    // once a space is read the user ids have ended
+    final tags = Set<String>();
+    int index = 0;
+    String origin;
+    while (payload[index] != ' ') {
+      ++index;
+
+      if (index % USER_ID_LENGTH == 0) {
+        final userID = payload.substring(index - USER_ID_LENGTH, index);
+        tags.add(userID);
+
+        // the last user id in the chain will be the origin
+        // by continuing to reassign origin we ensure this will be the case
+        origin = userID;
+      }
+    }
+
+    assert(origin != null);
+
+    // extract the timestamp and message from the payload
+    final messageBeginIndex = payload.indexOf(" ", index + 1);
+    final timestamp = payload.substring(index + 1, messageBeginIndex);
+    final message = payload.substring(messageBeginIndex + 1);
+
+    final cacheKey = "$origin $timestamp";
+
+    // check if the message already exists in the cache
+    // if it does we discard it
+    if (!this._cache.contains(cacheKey)) {
+      // TODO: items will need to be evicted from cache every so often, maybe every minute remove items that are a minute+ old?
+      this._cache.add(cacheKey);
+
+      this.events[CommunicationEvent.onMessageReceived].fire({
+        "origin": origin,
+        "message": message,
+      });
+      this._encodeAndSendMessage(payload, excludedIds: tags);
+    }
   }
-
-  void _onPayloadTransferUpdate(String id, PayloadTransferUpdate update) {}
 
   void sendMessage(String message) {
-    if (this.isConnected) {
-      final bytes = utf8.encode(message);
-      final packet = Uint8List.fromList(bytes.toList(growable: false));
+    final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
 
-      this.connections.forEach((connection) {
-        service.sendBytesPayload(connection, packet);
-      });
-    }
+    assert(this.id != null);
+
+    _encodeAndSendMessage("$id $timestamp $message");
+  }
+
+  void _encodeAndSendMessage(String message, {Set<String> excludedIds}) {
+    final mailingList =
+        this._connections.difference(excludedIds ?? Set<String>());
+
+    // if the mailing list is empty we can short-circuit the entire process
+    // and not bother trying to forward the payload
+    if (mailingList.isEmpty) return;
+    final taggedIds = mailingList.reduce((a, b) => a + b);
+
+    final payload = utf8.encode(taggedIds + message);
+
+    this.hardware.sendPayload(mailingList, payload);
+  }
+
+  Future<void> disconnect() {
+    // TODO: instead of having to clear the following 3 fields, consider putting
+    // them in a "network state" class that we simply set to null, and reassign
+    // when a new connection is created
+    this.id = null;
+    this._connections.clear();
+    this._cache.clear();
+
+    this.hardware.endScan();
+    return this.hardware.disconnect();
   }
 }
