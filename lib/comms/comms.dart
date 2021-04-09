@@ -4,9 +4,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:okbluemer/comms/comms_interface.dart';
+import 'package:flutter/foundation.dart';
 import 'package:okbluemer/comms/comms_utils.dart';
-import 'package:okbluemer/comms/nearby_api.dart';
 
 class Comms {
   static const SERVICE_ID = "com.okbluemer";
@@ -14,12 +13,12 @@ class Comms {
   String id;
   final _connections = Set<String>();
   final _cache = Set<String>();
+  final CommsHardware hardware;
   final _activeUsers = StreamController<int>.broadcast();
 
-  final CommsHardware hardware = nearbyAPI;
   final Map<CommunicationEvent, EventListener> events;
 
-  Comms(this.events);
+  Comms({@required this.events, @required this.hardware});
 
   Stream<int> get connectionsStream => _activeUsers.stream;
 
@@ -49,7 +48,7 @@ class Comms {
   void onConnectSuccess(String id) {
     this._connections.add(id);
     _activeUsers.add(_connections.length);
-    
+
     // send the user id back to the sender, so they know who they are
     this.hardware.sendPayload({id}, utf8.encode(id));
     // TODO: probably put this in some kind of event stream, so the UI can inform the user

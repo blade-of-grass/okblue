@@ -1,11 +1,14 @@
 import 'package:flutter/widgets.dart';
 import 'package:okbluemer/comms/comms.dart';
 import 'package:okbluemer/comms/comms_utils.dart';
+import 'package:okbluemer/comms/hardware/nearby_api.dart';
 
 class CommunicationBloc extends StatefulWidget {
   final Widget child;
+  final CommsHardware hardware;
 
-  CommunicationBloc({@required this.child});
+  CommunicationBloc({@required this.child, CommsHardware hardware})
+      : this.hardware = hardware ?? nearbyAPIHardware;
 
   @override
   CommunicationBlocState createState() => CommunicationBlocState();
@@ -28,7 +31,10 @@ class CommunicationBlocState extends State<CommunicationBloc> {
   };
 
   CommunicationBlocState() {
-    this._comms = Comms(_events);
+    this._comms = Comms(
+      events: _events,
+      hardware: hardware,
+    );
   }
 
   @override
