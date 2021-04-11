@@ -6,6 +6,7 @@ import 'package:okbluemer/blocs/message_bloc.dart';
 import 'package:okbluemer/comms/comms_utils.dart';
 import 'package:okbluemer/utils.dart';
 import 'package:okbluemer/widgets/custom_app_bar.dart';
+import 'package:okbluemer/widgets/frosted_glass.dart';
 import 'package:okbluemer/widgets/input_bar.dart';
 import 'package:okbluemer/widgets/message_list.dart';
 
@@ -59,27 +60,23 @@ class _MessagePageState extends State<MessagePage> {
           alignment: Alignment.topCenter,
           children: [
             // message list & input field
-            Column(
-              children: [
-                Expanded(
-                  child: MessageList(
-                    user: this.widget.user,
-                    scrollController: scrollController,
-                  ),
+            Column(children: [
+              Expanded(
+                child: MessageList(
+                  user: this.widget.user,
+                  scrollController: scrollController,
                 ),
-                InputBar(
-                  onSubmit: (message) => onClickSendMessage(context, message),
-                ),
-              ],
-            ),
+              ),
+              // input field
+              InputBar(
+                onSubmit: (message) => onClickSendMessage(context, message),
+              ),
+            ]),
             // header
-            ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                child: SafeArea(
-                  top: true,
-                  child: CustomAppBar(),
-                ),
+            FrostedGlass(
+              child: SafeArea(
+                top: true,
+                child: CustomAppBar(),
               ),
             ),
           ],

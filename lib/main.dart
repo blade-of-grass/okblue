@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:okbluemer/blocs/communications_bloc.dart';
 import 'package:okbluemer/blocs/message_bloc.dart';
+import 'package:okbluemer/comms/hardware/debug_hardware.dart';
 import 'package:okbluemer/configs.dart';
 import 'package:okbluemer/pages/home_page.dart';
 
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
     return MessageBloc(
       // [MessageBloc] contains all of the messages sent & received in the app
       child: CommunicationBloc(
+        hardware: debugHardware,
         // [CommunicationBloc] manages all bluetooth connection info
         child: MaterialApp(
           title: 'Ok Bluemer',

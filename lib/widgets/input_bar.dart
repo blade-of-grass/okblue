@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:okbluemer/configs.dart';
 import 'package:okbluemer/utils.dart';
+import 'package:okbluemer/widgets/input_bar_button.dart';
 
 class InputBar extends StatelessWidget {
   final void Function(Message message) onSubmit;
@@ -11,7 +13,7 @@ class InputBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black,
+      color: appBarColor,
       padding: EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,27 +33,31 @@ class InputBar extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: 8),
           Align(
             alignment: Alignment.topRight,
-            child: ClipOval(
-              child: Material(
-                color: Colors.indigo,
-                child: InkWell(
-                  highlightColor: Colors.transparent,
-                  splashColor: Colors.blue,
-                  child: Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Icon(
-                      Icons.send,
-                      size: 24.0,
+            child: Row(children: [
+              /// GIF button
+              InputBarButton(
+                  color: Colors.pink,
+                  onTap: () {},
+                  isBorder: true,
+                  child: Text(
+                    "GIF",
+                    style: TextStyle(
                       color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ),
+                  )),
+
+              /// submit button
+              InputBarButton(
+                  color: Colors.blue,
                   onTap: validateSubmission,
-                ),
-              ),
-            ),
+                  child: Icon(
+                    Icons.send,
+                    color: Colors.white,
+                  )),
+            ]),
           ),
         ],
       ),

@@ -47,15 +47,21 @@ class Packet {
 class UserInfo {
   final String name;
   final String id;
-  final Color color;
   bool isOnline;
+
+  Color _color;
+  Color get color {
+    if (_color == null) {
+      _color = getDeterministicColor(id + name);
+    }
+    return _color;
+  }
 
   UserInfo({
     @required String name,
     @required this.id,
     this.isOnline = true,
-  })  : color = getDeterministicColor(id + name),
-        name = validateName(name);
+  }) : name = validateName(name);
 
   static String generateUsername() {
     return getRandomName();

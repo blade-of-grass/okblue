@@ -49,9 +49,9 @@ class CommsConfiguration {
 
   /// called when [CommsHardware] detects a device available for connection
   /// [CommsHardware] calls this function to ask if it should connect to this device
-  /// [id] and [username] parameters are properties belonging to the other device
+  /// [id] parameters are properties belonging to the other device
   /// return true if you wish to initiate a connection, false otherwise
-  bool Function(String id, String username) onDeviceFound;
+  bool Function(String id) onDeviceFound;
 
   /// called when [CommmsHardware] successfully establishes a connection with device identified by [id]
   void Function(String id) onConnectSuccess;

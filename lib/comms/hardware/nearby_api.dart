@@ -49,7 +49,7 @@ class _NearbyAPI implements CommsHardware {
         this._config.username,
         Strategy.P2P_CLUSTER,
         onEndpointFound: (String id, String username, String serviceId) {
-          if (this._config.onDeviceFound(id, username)) {
+          if (this._config.onDeviceFound(id)) {
             print(
                 "found advertiser with name $username and id $id, requesting connection");
             this._service.requestConnection(

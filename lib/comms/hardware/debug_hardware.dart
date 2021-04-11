@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'dart:typed_data';
+import 'dart:convert';
 
 import 'package:okbluemer/comms/comms_utils.dart';
+import 'package:okbluemer/utils.dart';
 
 final CommsHardware debugHardware = DebugHardware.instance;
 
@@ -19,6 +21,15 @@ class DebugHardware implements CommsHardware {
   final random = new Random();
 
   Set<String> get unusedIds => generatedIds.difference(this.takenIds);
+
+  String getAndUseID() {
+    final idPool = this.unusedIds.toList(growable: false);
+    final id = idPool[random.nextInt(idPool.length)];
+
+    takenIds.add(id);
+
+    return id;
+  }
 
   static DebugHardware _instance;
   static DebugHardware get instance {
@@ -54,24 +65,42 @@ class DebugHardware implements CommsHardware {
     this._config = config;
     this._shouldScan = true;
 
+    final self = getAndUseID();
+
     Future.doWhile(() async {
+      String a = getAndUseID();
+      assert(this._config.onDeviceFound(a));
+      await Future.delayed(Duration(seconds: 1));
+      this._config.onConnectSuccess(a);
+
+      final handshake = utf8.encode(self);
+      this._config.onPayloadReceived(a, handshake);
+
+      await Future.delayed(Duration(seconds: 3));
+
+      final timestamp = DateTime.now();
+      final message = Message(time: timestamp, text: "hello world");
+      final user = UserInfo(id: a, name: null, isOnline: true);
+      final packet = Packet(message: message, user: user);
+      final payload = a +
+          " " +
+          timestamp.millisecondsSinceEpoch.toString() +
+          " " +
+          packet.serialize();
+      final bytes = Uint8List.fromList(utf8.encode(payload));
+
+      this._config.onPayloadReceived(a, bytes);
+
+      // if (random.nextDouble() < ODDS_OF_A_SUCCESSFUL_CONNECTION) {
+      //   this._config.onConnectSuccess(id);
+      // } else {
+      //   this._config.onConnectFail(id);
+      // }{
+      // this._config.onDisconnect(id);
+
+      await Future.delayed(Duration(seconds: 2));
+
       return this._shouldScan;
     });
-  }
-
-  void _onConnectionResult(String id) {
-    if (random.nextDouble() < ODDS_OF_A_SUCCESSFUL_CONNECTION) {
-      this._config.onConnectSuccess(id);
-    } else {
-      this._config.onConnectFail(id);
-    }
-  }
-
-  void _onDisconnected(String id) {
-    this._config.onDisconnect(id);
-  }
-
-  void _onPayloadReceived(String id) {
-    this._config.onPayloadReceived(id, bytes);
   }
 }

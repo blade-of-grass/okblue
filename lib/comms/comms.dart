@@ -58,7 +58,7 @@ class Comms {
     // TODO: probably put this in some kind of event stream, so the UI can inform the user
   }
 
-  bool onDeviceFound(String id, String username) {
+  bool onDeviceFound(String id) {
     if (this._connections.contains(id)) {
       return false;
     } else {

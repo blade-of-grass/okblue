@@ -109,7 +109,7 @@ class _MessageCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: this.alignment,
             children: [
-              Text(this.message.text),
+              Text(this.message.text, style: TextStyle(fontSize: 16)),
               SizedBox(height: 4),
               Text(
                 getFormattedTime(this.message.time),

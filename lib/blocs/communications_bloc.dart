@@ -30,16 +30,14 @@ class CommunicationBlocState extends State<CommunicationBloc> {
     CommunicationEvent.onJoin: EventListener(),
   };
 
-  CommunicationBlocState() {
-    this._comms = Comms(
-      events: _events,
-      hardware: hardware,
-    );
-  }
-
   @override
   void initState() {
     super.initState();
+
+    this._comms = Comms(
+      events: _events,
+      hardware: this.widget.hardware,
+    );
     this._comms.beginScan("");
   }
 
