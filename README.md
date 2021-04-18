@@ -20,6 +20,6 @@ please use this option if...
 * the above steps aren't clear enough to build the project (please let us know if this is the case)
 * you don't feel like setting up the development environment to install the apk
 
-we've bundled a pre-built, debug, Android version of the application into the repository specifically for the above cases.
+we've bundled a pre-built, Android version of the application into the repository specifically for the above cases.
 
 this application can be accessed [here](./app-release.apk)
