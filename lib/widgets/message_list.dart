@@ -16,7 +16,7 @@ class MessageList extends StatelessWidget {
         stream: MessageBloc.of(context).stream,
         initialData: MessageBloc.of(context).currentMessages,
         builder: (context, messageSnapshot) {
-          final messages = messageSnapshot.hasData ? messageSnapshot.data : [];
+          final messages = messageSnapshot.data ?? [];
 
           return ListView.builder(
             reverse: true,
@@ -27,16 +27,10 @@ class MessageList extends StatelessWidget {
               //final user = messages[index].user;
               final messageBlock = messages[messages.length - 1 - index];
               final user = messageBlock.user;
-              CrossAxisAlignment alignment;
-              if (user.name == this.user.name) {
-                alignment = CrossAxisAlignment.end;
-              } else {
-                alignment = CrossAxisAlignment.start;
-              }
 
               return MessageBox(
                 messageBlock: messageBlock,
-                alignment: alignment,
+                isLocalUser: this.user.commpareIdentifiers(user),
               );
             },
           );

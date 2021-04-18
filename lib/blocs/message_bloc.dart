@@ -27,7 +27,7 @@ class MessageBlocState extends State<MessageBloc> {
   void addMessage(Packet packet) {
     if (this._messages.isNotEmpty) {
       final lastBlock = this._messages.last;
-      if (lastBlock.user.id == packet.user.id) {
+      if (lastBlock.user.commpareIdentifiers(packet.user)) {
         lastBlock.messages.add(packet.message);
         this._messageStream.add(this._messages);
 
@@ -36,6 +36,10 @@ class MessageBlocState extends State<MessageBloc> {
     }
     this._messages.add(MessageGroup.withPacket(packet));
     this._messageStream.add(this._messages);
+  }
+
+  void clear() {
+    _messages.clear();
   }
 
   @override

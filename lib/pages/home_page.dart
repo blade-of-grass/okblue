@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:okbluemer/blocs/communications_bloc.dart';
+import 'package:okbluemer/configs.dart';
+import 'package:okbluemer/pages/message_page.dart';
 import 'package:okbluemer/pages/scan_page.dart';
 import 'package:okbluemer/utils.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
-
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -15,15 +16,30 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
     userName = UserInfo.generateUsername();
   }
 
   void _onClickContinue() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ScanPage(userName)),
-    );
+    final commBloc = CommunicationBloc.of(context);
+
+    if (commBloc.isConnected) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MessagePage(
+            user: UserInfo(
+              id: commBloc.id,
+              name: this.userName,
+            ),
+          ),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ScanPage(userName)),
+      );
+    }
   }
 
   @override
@@ -41,6 +57,7 @@ class _HomePageState extends State<HomePage> {
               onChanged: (inputedUserName) {
                 userName = inputedUserName;
               },
+              maxLength: MAX_NAME_LENGTH,
               controller: TextEditingController(),
               decoration: InputDecoration(
                   hintText: userName,
@@ -54,7 +71,7 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               height: 16,
             ),
-            RaisedButton(
+            ElevatedButton(
               onPressed: _onClickContinue,
               child: Text(
                 "Continue",
@@ -62,11 +79,14 @@ class _HomePageState extends State<HomePage> {
                   color: Theme.of(context).scaffoldBackgroundColor,
                 ),
               ),
-              splashColor: Colors.white,
-              highlightColor: Colors.transparent,
-              color: Colors.white.withAlpha(220),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(32.0),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.white),
+                overlayColor: MaterialStateProperty.all(Colors.transparent),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(32.0),
+                  ),
+                ),
               ),
             ),
           ],

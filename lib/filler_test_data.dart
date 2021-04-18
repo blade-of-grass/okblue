@@ -22,7 +22,8 @@ getFillerTestMessages(
   final List<UserInfo> sampleUsers = [];
   Random random = new Random();
   for (int i = 0; i < users; ++i) {
-    sampleUsers.add(UserInfo(name: null, isOnline: random.nextBool()));
+    sampleUsers
+        .add(UserInfo(name: null, id: "$i", isOnline: random.nextBool()));
   }
   sampleUsers.add(self);
 

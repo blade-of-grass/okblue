@@ -8,14 +8,13 @@ class Packet {
 
   Packet({@required this.user, @required this.message});
 
-  static Packet deserialize(String data, String senderId) {
+  static Packet deserialize(dynamic payload) {
+    final origin = payload["origin"];
+    final data = payload["message"];
+
     int start = 0;
     int end = data.indexOf(" ", start);
     final name = data.substring(start, end).replaceAll("%20", " ");
-
-    start = end + 1;
-    end = data.indexOf(" ", start);
-    final id = data.substring(start, end);
 
     start = end + 1;
     end = data.indexOf(" ", start);
@@ -31,24 +30,21 @@ class Packet {
       ),
       user: UserInfo(
         name: name,
-        id: id == UserInfo.DEFAULT_ID ? senderId : id,
+        id: origin,
       ),
     );
   }
 
   String serialize() {
     final name = this.user.name.replaceAll(" ", "%20");
-    final id = this.user.id;
     final time = this.message.time.millisecondsSinceEpoch.toString();
     final text = this.message.text;
 
-    return "$name $id $time $text";
+    return "$name $time $text";
   }
 }
 
 class UserInfo {
-  static const DEFAULT_ID = "me";
-
   final String name;
   final String id;
   final Color color;
@@ -56,9 +52,9 @@ class UserInfo {
 
   UserInfo({
     @required String name,
-    this.id = DEFAULT_ID,
+    @required this.id,
     this.isOnline = true,
-  })  : color = getRandomColor(),
+  })  : color = getDeterministicColor(id + name),
         name = validateName(name);
 
   static String generateUsername() {
@@ -71,6 +67,10 @@ class UserInfo {
     } else {
       return submittedName;
     }
+  }
+
+  bool commpareIdentifiers(UserInfo other) {
+    return this.id == other.id && this.name == other.name;
   }
 }
 
@@ -101,28 +101,6 @@ class Message {
   });
 }
 
-class NetworkState {
-  var _state = Map<UserInfo, List<UserInfo>>();
-
-  void makeConnection(UserInfo a, UserInfo b) {
-    _state[a].add(b);
-    _state[b].add(a);
-  }
-
-  // String serialize() {
-  //   String value = "";
-  //   for (final user in _state.keys) {
-  //     value += "user.id";
-  //     for (final connection in _state[user]) {
-  //       value += "connection.id" + "-";
-  //     }
-  //     value += ",";
-  //   }
-
-  //   return value;
-  // }
-}
-
 String getFormattedTime(DateTime time) {
   String zeroPadding = "";
   if (time.minute < 10) {
@@ -138,20 +116,4 @@ String getFormattedTime(DateTime time) {
   }
 
   return "$hour:$zeroPadding${time.minute}";
-}
-
-class EventListener {
-  final _listeners = Set<Function(dynamic)>();
-
-  void subscribe(Function(dynamic) listener) {
-    _listeners.add(listener);
-  }
-
-  void unsubscribe(Function(dynamic) listener) {
-    _listeners.remove(listener);
-  }
-
-  void fire(dynamic data) {
-    _listeners.forEach((listener) => listener(data));
-  }
 }
